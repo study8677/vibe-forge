@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-dark-950 text-dark-200 antialiased;
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-dark-600 rounded-full;
+  }
+
+  /* smooth pulse for critical alerts */
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,.25); }
+    50%      { box-shadow: 0 0 12px 2px rgba(239,68,68,.35); }
+  }
+  .alert-critical { animation: glow 2s ease-in-out infinite; }
+}

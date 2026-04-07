@@ -1,0 +1,32 @@
+[job]
+id = "demo-video-ai-job"
+
+[runtime]
+work_root = ".runs"
+gpu_policy = "preferred"
+
+[assets]
+source_video = "input/source.mp4"
+voice_reference = "input/voice_reference.wav"
+face_source = "input/face_source.png"
+script_text = "这是替换后的配音脚本。"
+
+[stages.subtitle_erase]
+enabled = true
+command = "python3 scripts/mock_backend.py --mode video-copy --input {input_video} --output {output_video}"
+output = "subtitle_erased.mp4"
+
+[stages.tts]
+enabled = true
+command = "python3 scripts/mock_backend.py --mode audio-silence --output {output_audio}"
+output = "tts.wav"
+
+[stages.lip_sync]
+enabled = true
+command = "python3 scripts/mock_backend.py --mode video-copy --input {input_video} --output {output_video}"
+output = "lip_synced.mp4"
+
+[stages.face_swap]
+enabled = true
+command = "python3 scripts/mock_backend.py --mode video-copy --input {input_video} --output {output_video}"
+output = "face_swapped.mp4"

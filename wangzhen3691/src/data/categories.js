@@ -1,0 +1,18 @@
+export const categories = [
+  { id: 1, name: '开发调优', slug: 'develop', color: '#32c3c3', textColor: '#000', count: 78626, icon: '⚙️' },
+  { id: 2, name: '国产替代', slug: 'domestic', color: '#D12C25', textColor: '#fff', count: 974, icon: '🇨🇳' },
+  { id: 3, name: '资源荟萃', slug: 'resource', color: '#12A89D', textColor: '#fff', count: 26681, icon: '📦' },
+  { id: 4, name: '云存储', slug: 'cloud-asset', color: '#16b176', textColor: '#fff', count: 21992, parent: 3, icon: '☁️' },
+  { id: 5, name: 'WIKI', slug: 'wiki', color: '#9cb6c4', textColor: '#000', count: 1172, icon: '📖' },
+  { id: 6, name: '招聘', slug: 'job', color: '#a8c6fe', textColor: '#000', count: 1156, icon: '💼' },
+  { id: 7, name: '读书', slug: 'reading', color: '#e0d900', textColor: '#000', count: 969, icon: '📚' },
+  { id: 8, name: '快讯', slug: 'news', color: '#BB8FCE', textColor: '#000', count: 16533, icon: '📰' },
+  { id: 9, name: '订阅', slug: 'feeds', color: '#F7941D', textColor: '#000', count: 69, icon: '📡' },
+  { id: 10, name: '福利羊毛', slug: 'welfare', color: '#E45735', textColor: '#fff', count: 13742, icon: '🎁' },
+  { id: 11, name: '非技术', slug: 'gossip', color: '#3AB54A', textColor: '#000', count: 154039, icon: '💬' },
+  { id: 12, name: '虫洞广场', slug: 'square', color: '#ff00f7', textColor: '#000', count: 94, icon: '🕳️' },
+  { id: 13, name: '运维反馈', slug: 'feedback', color: '#808281', textColor: '#000', count: 6114, icon: '🔧' },
+  { id: 14, name: '公告', slug: 'announcement', color: '#F1592A', textColor: '#000', count: 19, parent: 13, icon: '📢' },
+  { id: 15, name: '活动', slug: 'activity', color: '#38571A', textColor: '#fff', count: 6381, icon: '🎉' },
+  { id: 16, name: '悬赏', slug: 'bounty', color: '#c4b512', textColor: '#000', count: 14, parent: 13, icon: '🏆' },
+]

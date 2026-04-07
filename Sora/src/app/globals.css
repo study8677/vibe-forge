@@ -1,0 +1,397 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========== Base Styles ========== */
+:root {
+  --sidebar-width: 260px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  color: #37352f;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+::selection {
+  background: #2383e2;
+  color: white;
+}
+
+/* ========== Scrollbar ========== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d3d1cb;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #aeaca6;
+}
+
+/* ========== Focus Styles ========== */
+*:focus-visible {
+  outline: 2px solid #2383e2;
+  outline-offset: 1px;
+  border-radius: 2px;
+}
+
+/* ========== Markdown Prose ========== */
+.markdown-body {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #37352f;
+  word-wrap: break-word;
+}
+
+.markdown-body > *:first-child {
+  margin-top: 0;
+}
+
+.markdown-body > *:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.markdown-body h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.markdown-body h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 1.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.markdown-body p {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+.markdown-body a {
+  color: #37352f;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: #37352f80;
+  transition: text-decoration-color 0.15s;
+}
+
+.markdown-body a:hover {
+  text-decoration-color: #37352f;
+}
+
+.markdown-body strong {
+  font-weight: 600;
+}
+
+.markdown-body em {
+  font-style: italic;
+}
+
+.markdown-body del {
+  color: #787774;
+}
+
+.markdown-body blockquote {
+  margin: 0.75rem 0;
+  padding: 0.125rem 0 0.125rem 1rem;
+  border-left: 3px solid #37352f;
+  color: #37352f;
+}
+
+.markdown-body blockquote p {
+  margin-bottom: 0;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 1.625rem;
+  margin-bottom: 0.75rem;
+}
+
+.markdown-body li {
+  margin-bottom: 0.25rem;
+}
+
+.markdown-body li > ul,
+.markdown-body li > ol {
+  margin-bottom: 0;
+  margin-top: 0.25rem;
+}
+
+/* Task list (GFM checkboxes) */
+.markdown-body ul:has(> li > input[type="checkbox"]) {
+  list-style: none;
+  padding-left: 0.25rem;
+}
+
+.markdown-body li > input[type="checkbox"] {
+  margin-right: 0.5rem;
+  accent-color: #2383e2;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
+
+/* Inline code */
+.markdown-body code:not(pre code) {
+  font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace;
+  font-size: 85%;
+  background: #f7f6f3;
+  color: #eb5757;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+/* Code blocks */
+.markdown-body pre {
+  margin: 0.75rem 0;
+  padding: 1rem;
+  background: #f7f6f3;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.markdown-body pre code {
+  font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace;
+  background: none;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+/* Tables */
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0;
+  font-size: 0.9375rem;
+}
+
+.markdown-body th {
+  font-weight: 600;
+  text-align: left;
+  padding: 0.5rem 1rem;
+  border-bottom: 2px solid #e8e7e3;
+  background: #f7f7f5;
+}
+
+.markdown-body td {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #e8e7e3;
+}
+
+.markdown-body tr:last-child td {
+  border-bottom: none;
+}
+
+.markdown-body hr {
+  border: none;
+  border-top: 1px solid #e8e7e3;
+  margin: 1.5rem 0;
+}
+
+.markdown-body img {
+  max-width: 100%;
+  border-radius: 4px;
+  margin: 0.5rem 0;
+}
+
+/* ========== Highlight.js Notion-like Theme ========== */
+.hljs {
+  color: #37352f;
+}
+.hljs-comment,
+.hljs-quote {
+  color: #9b9a97;
+  font-style: italic;
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-addition {
+  color: #9065b0;
+}
+.hljs-number,
+.hljs-string,
+.hljs-meta .hljs-meta-string,
+.hljs-literal,
+.hljs-doctag,
+.hljs-regexp {
+  color: #e9820c;
+}
+.hljs-title,
+.hljs-section,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #eb5757;
+}
+.hljs-attribute,
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-class .hljs-title,
+.hljs-type {
+  color: #dfab01;
+}
+.hljs-symbol,
+.hljs-bullet,
+.hljs-subst,
+.hljs-meta,
+.hljs-meta .hljs-keyword,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-link {
+  color: #e9820c;
+}
+.hljs-built_in,
+.hljs-deletion {
+  color: #eb5757;
+}
+.hljs-formula {
+  background: #f7f6f3;
+}
+.hljs-emphasis {
+  font-style: italic;
+}
+.hljs-strong {
+  font-weight: bold;
+}
+
+/* ========== Editor ========== */
+.note-editor-textarea {
+  font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  tab-size: 2;
+  resize: none;
+  color: #37352f;
+}
+
+.note-editor-textarea::placeholder {
+  color: #c4c4c0;
+}
+
+.note-title-input {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #37352f;
+}
+
+.note-title-input::placeholder {
+  color: #c4c4c0;
+}
+
+/* ========== Kanban ========== */
+.kanban-column {
+  min-height: 200px;
+}
+
+.kanban-card-dragging {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: rotate(2deg);
+}
+
+/* ========== Transitions ========== */
+.sidebar-enter {
+  animation: slideRight 0.2s ease-out;
+}
+
+@keyframes slideRight {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ========== Tooltip ========== */
+.tooltip {
+  position: relative;
+}
+
+.tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: #37352f;
+  color: white;
+  font-size: 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+
+.tooltip:hover::after {
+  opacity: 1;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 100%;
+  }
+
+  .markdown-body {
+    font-size: 15px;
+  }
+
+  .note-title-input {
+    font-size: 1.75rem;
+  }
+}

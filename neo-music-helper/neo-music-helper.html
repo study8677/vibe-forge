@@ -1,0 +1,1863 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="imperial">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>始皇顶级音乐播放器 | Neo Music Helper</title>
+<style>
+/* ═══════════════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;user-select:none}
+body{
+  font-family:'Segoe UI',system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
+  background:var(--bg-1);
+  color:var(--tx-1);
+  transition:background .6s ease, color .6s ease;
+}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--ac-1);border-radius:3px;opacity:.5}
+
+/* ═══════════════════════════════════════════════════════
+   THEME VARIABLES
+   ═══════════════════════════════════════════════════════ */
+:root, [data-theme="imperial"]{
+  --bg-1:#0d0805;--bg-2:rgba(40,20,10,.85);--bg-3:rgba(60,30,15,.5);
+  --ac-1:#ffd700;--ac-2:#ff6b35;--ac-3:#c41e3a;--ac-4:#8b4513;
+  --tx-1:#fff5e1;--tx-2:#c9a96e;--tx-3:#806030;
+  --glow:#ffd700;--glass:rgba(255,215,0,.08);
+  --emperor-crown:#ffd700;--emperor-robe:#c41e3a;--emperor-skin:#ffe0bd;
+  --emperor-belt:#ffd700;--emperor-accent:#ff6b35;
+  --theme-name:'帝王金';
+}
+[data-theme="cyber"]{
+  --bg-1:#03030f;--bg-2:rgba(15,15,50,.85);--bg-3:rgba(25,25,80,.5);
+  --ac-1:#00f0ff;--ac-2:#ff00ff;--ac-3:#7b2fff;--ac-4:#0040ff;
+  --tx-1:#e0e0ff;--tx-2:#8888ff;--tx-3:#4444aa;
+  --glow:#00f0ff;--glass:rgba(0,240,255,.06);
+  --emperor-crown:#00f0ff;--emperor-robe:#7b2fff;--emperor-skin:#c0c0ff;
+  --emperor-belt:#ff00ff;--emperor-accent:#00f0ff;
+  --theme-name:'赛博霓虹';
+}
+[data-theme="dark"]{
+  --bg-1:#080808;--bg-2:rgba(25,25,25,.85);--bg-3:rgba(40,40,40,.5);
+  --ac-1:#ffffff;--ac-2:#888888;--ac-3:#555555;--ac-4:#333333;
+  --tx-1:#ffffff;--tx-2:#aaaaaa;--tx-3:#666666;
+  --glow:#ffffff;--glass:rgba(255,255,255,.05);
+  --emperor-crown:#e0e0e0;--emperor-robe:#444444;--emperor-skin:#cccccc;
+  --emperor-belt:#ffffff;--emperor-accent:#888888;
+  --theme-name:'暗夜星空';
+}
+[data-theme="matrix"]{
+  --bg-1:#000800;--bg-2:rgba(0,15,0,.85);--bg-3:rgba(0,25,0,.5);
+  --ac-1:#00ff41;--ac-2:#00cc33;--ac-3:#008f11;--ac-4:#005500;
+  --tx-1:#00ff41;--tx-2:#00bb30;--tx-3:#006618;
+  --glow:#00ff41;--glass:rgba(0,255,65,.05);
+  --emperor-crown:#00ff41;--emperor-robe:#005500;--emperor-skin:#00cc33;
+  --emperor-belt:#00ff41;--emperor-accent:#00ff41;
+  --theme-name:'矩阵代码';
+}
+[data-theme="sakura"]{
+  --bg-1:#0c0308;--bg-2:rgba(35,10,25,.85);--bg-3:rgba(55,20,40,.5);
+  --ac-1:#ff69b4;--ac-2:#ff1493;--ac-3:#c71585;--ac-4:#8b0a50;
+  --tx-1:#ffe0f0;--tx-2:#ff99cc;--tx-3:#aa5577;
+  --glow:#ff69b4;--glass:rgba(255,105,180,.06);
+  --emperor-crown:#ff69b4;--emperor-robe:#c71585;--emperor-skin:#ffe0f0;
+  --emperor-belt:#ff1493;--emperor-accent:#ff69b4;
+  --theme-name:'樱花物语';
+}
+[data-theme="ocean"]{
+  --bg-1:#020810;--bg-2:rgba(5,20,45,.85);--bg-3:rgba(10,35,70,.5);
+  --ac-1:#00bfff;--ac-2:#1e90ff;--ac-3:#4169e1;--ac-4:#00008b;
+  --tx-1:#e0f0ff;--tx-2:#80c0ff;--tx-3:#4080aa;
+  --glow:#00bfff;--glass:rgba(0,191,255,.06);
+  --emperor-crown:#00bfff;--emperor-robe:#4169e1;--emperor-skin:#b0d4f1;
+  --emperor-belt:#1e90ff;--emperor-accent:#00bfff;
+  --theme-name:'深海幽蓝';
+}
+
+/* ═══════════════════════════════════════════════════════
+   LOADING SCREEN
+   ═══════════════════════════════════════════════════════ */
+.loading-screen{
+  position:fixed;inset:0;z-index:9999;
+  background:#000;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  transition:opacity .8s ease, visibility .8s ease;
+}
+.loading-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.loading-title{
+  font-size:2.4rem;font-weight:700;
+  background:linear-gradient(135deg,#ffd700,#ff6b35,#c41e3a);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:loadPulse 1.5s ease-in-out infinite;
+}
+.loading-sub{color:#888;margin-top:12px;font-size:.9rem;letter-spacing:4px}
+.loading-bar{
+  width:200px;height:3px;background:#222;border-radius:2px;margin-top:30px;overflow:hidden;
+}
+.loading-bar-inner{
+  width:0%;height:100%;background:linear-gradient(90deg,#ffd700,#ff6b35);
+  border-radius:2px;animation:loadBar 2s ease-in-out forwards;
+}
+@keyframes loadPulse{0%,100%{opacity:1}50%{opacity:.6}}
+@keyframes loadBar{0%{width:0}100%{width:100%}}
+
+/* ═══════════════════════════════════════════════════════
+   APP LAYOUT
+   ═══════════════════════════════════════════════════════ */
+.app{display:flex;flex-direction:column;height:100vh;opacity:0;transition:opacity .5s ease}
+.app.ready{opacity:1}
+
+/* HEADER */
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 20px;background:var(--bg-2);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  backdrop-filter:blur(20px);z-index:100;
+}
+.header-brand{display:flex;align-items:center;gap:10px}
+.header-brand svg{width:28px;height:28px}
+.header-title{font-size:1.1rem;font-weight:700;color:var(--ac-1)}
+.header-sub{font-size:.7rem;color:var(--tx-2);letter-spacing:2px;text-transform:uppercase}
+.header-actions{display:flex;align-items:center;gap:8px}
+
+/* Theme Switcher */
+.theme-btn{
+  padding:6px 14px;border-radius:20px;border:1px solid var(--ac-1);
+  background:transparent;color:var(--ac-1);cursor:pointer;font-size:.75rem;
+  transition:all .3s;font-family:inherit;
+}
+.theme-btn:hover{background:var(--ac-1);color:var(--bg-1)}
+.theme-dropdown{
+  position:absolute;top:50px;right:20px;background:var(--bg-2);
+  border:1px solid rgba(255,255,255,.1);border-radius:12px;
+  padding:8px;backdrop-filter:blur(20px);z-index:200;
+  display:none;min-width:160px;
+}
+.theme-dropdown.show{display:block}
+.theme-option{
+  padding:10px 16px;border-radius:8px;cursor:pointer;
+  display:flex;align-items:center;gap:10px;transition:background .2s;
+  color:var(--tx-1);font-size:.85rem;
+}
+.theme-option:hover{background:var(--glass)}
+.theme-option.active{background:var(--glass);font-weight:600}
+.theme-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+
+/* MAIN CONTENT */
+.main{flex:1;display:flex;overflow:hidden;position:relative}
+
+/* Visualization Area */
+.viz-area{
+  flex:1;position:relative;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+#vizCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+#particleCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+
+/* ═══════════════════════════════════════════════════════
+   EMPEROR CHARACTER
+   ═══════════════════════════════════════════════════════ */
+.emperor-container{
+  position:relative;z-index:10;
+  width:220px;height:320px;
+  filter:drop-shadow(0 0 30px var(--glow));
+  transition:filter .5s;
+}
+.emperor-container.dancing{
+  filter:drop-shadow(0 0 50px var(--glow)) drop-shadow(0 0 80px var(--ac-2));
+}
+.emperor-svg{width:100%;height:100%}
+
+/* Emperor parts coloring */
+.emp-crown{fill:var(--emperor-crown);transition:fill .5s}
+.emp-crown-jewel{fill:var(--ac-3);transition:fill .5s}
+.emp-bead{fill:var(--emperor-crown);opacity:.8;transition:fill .5s}
+.emp-bead-string{stroke:var(--emperor-crown);stroke-width:1;opacity:.6;transition:stroke .5s}
+.emp-head{fill:var(--emperor-skin);transition:fill .5s}
+.emp-eye{fill:var(--bg-1);transition:fill .5s}
+.emp-mouth{stroke:var(--ac-3);fill:none;stroke-width:2;stroke-linecap:round;transition:stroke .5s}
+.emp-beard{fill:var(--tx-3);opacity:.7;transition:fill .5s}
+.emp-robe{fill:var(--emperor-robe);transition:fill .5s}
+.emp-robe-trim{fill:var(--emperor-crown);opacity:.6;transition:fill .5s}
+.emp-dragon{fill:var(--emperor-crown);opacity:.8;transition:fill .5s;font-size:28px;font-weight:bold}
+.emp-belt{fill:var(--emperor-belt);transition:fill .5s}
+.emp-sleeve{fill:var(--emperor-robe);filter:brightness(1.2);transition:fill .5s}
+.emp-hand{fill:var(--emperor-skin);transition:fill .5s}
+.emp-foot{fill:var(--ac-4);transition:fill .5s}
+.emp-shadow{fill:var(--glow);opacity:.15;transition:fill .5s}
+
+/* Emperor Animations */
+.emperor-container .emp-body-group{
+  transform-origin:100px 140px;
+  animation:empIdle 3s ease-in-out infinite;
+}
+.emperor-container.dancing .emp-body-group{
+  animation:empBounce .4s ease-in-out infinite alternate;
+}
+.emperor-container .emp-left-arm{
+  transform-origin:65px 150px;
+  animation:empArmIdleL 4s ease-in-out infinite;
+}
+.emperor-container.dancing .emp-left-arm{
+  animation:empArmDanceL .5s ease-in-out infinite alternate;
+}
+.emperor-container .emp-right-arm{
+  transform-origin:135px 150px;
+  animation:empArmIdleR 4s ease-in-out infinite .5s;
+}
+.emperor-container.dancing .emp-right-arm{
+  animation:empArmDanceR .5s ease-in-out infinite alternate-reverse;
+}
+.emperor-container .emp-left-leg{
+  transform-origin:82px 268px;
+  animation:empLegIdleL 3s ease-in-out infinite;
+}
+.emperor-container.dancing .emp-left-leg{
+  animation:empLegDanceL .35s ease-in-out infinite alternate;
+}
+.emperor-container .emp-right-leg{
+  transform-origin:118px 268px;
+  animation:empLegIdleR 3s ease-in-out infinite .3s;
+}
+.emperor-container.dancing .emp-right-leg{
+  animation:empLegDanceR .35s ease-in-out infinite alternate-reverse;
+}
+.emperor-container .emp-head-group{
+  transform-origin:100px 100px;
+  animation:empHeadIdle 5s ease-in-out infinite;
+}
+.emperor-container.dancing .emp-head-group{
+  animation:empHeadDance .6s ease-in-out infinite alternate;
+}
+.emperor-container .emp-crown-group{
+  transform-origin:100px 70px;
+}
+.emperor-container .emp-bead-left{
+  transform-origin:78px 90px;
+  animation:empBeadSwing 2s ease-in-out infinite;
+}
+.emperor-container .emp-bead-right{
+  transform-origin:122px 90px;
+  animation:empBeadSwing 2s ease-in-out infinite .3s;
+}
+.emperor-container.dancing .emp-bead-left{
+  animation:empBeadDance .4s ease-in-out infinite alternate;
+}
+.emperor-container.dancing .emp-bead-right{
+  animation:empBeadDance .4s ease-in-out infinite alternate-reverse;
+}
+.emperor-container .emp-robe-lower{
+  transform-origin:100px 200px;
+  animation:empRobeIdle 4s ease-in-out infinite;
+}
+.emperor-container.dancing .emp-robe-lower{
+  animation:empRobeDance .5s ease-in-out infinite alternate;
+}
+
+/* IDLE Animations */
+@keyframes empIdle{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes empArmIdleL{0%,100%{transform:rotate(0)}50%{transform:rotate(-3deg)}}
+@keyframes empArmIdleR{0%,100%{transform:rotate(0)}50%{transform:rotate(3deg)}}
+@keyframes empLegIdleL{0%,100%{transform:rotate(0)}50%{transform:rotate(1deg)}}
+@keyframes empLegIdleR{0%,100%{transform:rotate(0)}50%{transform:rotate(-1deg)}}
+@keyframes empHeadIdle{0%,100%{transform:rotate(0)}50%{transform:rotate(2deg)}}
+@keyframes empBeadSwing{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes empRobeIdle{0%,100%{transform:skewX(0)}50%{transform:skewX(1deg)}}
+
+/* DANCE Animations */
+@keyframes empBounce{0%{transform:translateY(0) scaleY(1)}100%{transform:translateY(-15px) scaleY(.97)}}
+@keyframes empArmDanceL{0%{transform:rotate(20deg)}100%{transform:rotate(-45deg)}}
+@keyframes empArmDanceR{0%{transform:rotate(-20deg)}100%{transform:rotate(45deg)}}
+@keyframes empLegDanceL{0%{transform:rotate(-12deg)}100%{transform:rotate(12deg)}}
+@keyframes empLegDanceR{0%{transform:rotate(12deg)}100%{transform:rotate(-12deg)}}
+@keyframes empHeadDance{0%{transform:rotate(-8deg)}100%{transform:rotate(8deg)}}
+@keyframes empBeadDance{0%{transform:rotate(-15deg)}100%{transform:rotate(15deg)}}
+@keyframes empRobeDance{0%{transform:skewX(-3deg)}100%{transform:skewX(3deg)}}
+
+/* Dance Style Variations */
+.emperor-container[data-dance="hiphop"] .emp-body-group{
+  animation:empHiphop .3s cubic-bezier(.68,-.55,.27,1.55) infinite alternate !important;
+}
+.emperor-container[data-dance="hiphop"] .emp-left-arm{
+  animation:empHiphopArmL .6s cubic-bezier(.68,-.55,.27,1.55) infinite alternate !important;
+}
+.emperor-container[data-dance="hiphop"] .emp-right-arm{
+  animation:empHiphopArmR .6s cubic-bezier(.68,-.55,.27,1.55) infinite alternate-reverse !important;
+}
+@keyframes empHiphop{0%{transform:translateY(0) rotate(-3deg)}100%{transform:translateY(-20px) rotate(3deg)}}
+@keyframes empHiphopArmL{0%{transform:rotate(60deg)}100%{transform:rotate(-30deg)}}
+@keyframes empHiphopArmR{0%{transform:rotate(-60deg)}100%{transform:rotate(30deg)}}
+
+.emperor-container[data-dance="disco"] .emp-body-group{
+  animation:empDisco .5s ease-in-out infinite alternate !important;
+}
+.emperor-container[data-dance="disco"] .emp-left-arm{
+  animation:empDiscoArmL 1s ease-in-out infinite !important;
+}
+.emperor-container[data-dance="disco"] .emp-right-arm{
+  animation:empDiscoArmR 1s ease-in-out infinite !important;
+}
+@keyframes empDisco{0%{transform:translateY(0) scaleX(1)}100%{transform:translateY(-10px) scaleX(.95)}}
+@keyframes empDiscoArmL{0%,100%{transform:rotate(-30deg)}25%{transform:rotate(-80deg)}50%{transform:rotate(-30deg)}75%{transform:rotate(20deg)}}
+@keyframes empDiscoArmR{0%,100%{transform:rotate(80deg)}25%{transform:rotate(30deg)}50%{transform:rotate(80deg)}75%{transform:rotate(-20deg)}}
+
+.emperor-container[data-dance="robot"] .emp-body-group{
+  animation:empRobot .25s steps(2) infinite !important;
+}
+.emperor-container[data-dance="robot"] .emp-left-arm{
+  animation:empRobotArmL .5s steps(4) infinite !important;
+}
+.emperor-container[data-dance="robot"] .emp-right-arm{
+  animation:empRobotArmR .5s steps(4) infinite !important;
+}
+.emperor-container[data-dance="robot"] .emp-head-group{
+  animation:empRobotHead .5s steps(3) infinite !important;
+}
+@keyframes empRobot{0%{transform:translateY(0)}100%{transform:translateY(-12px)}}
+@keyframes empRobotArmL{0%{transform:rotate(0)}25%{transform:rotate(-90deg)}50%{transform:rotate(0)}75%{transform:rotate(45deg)}100%{transform:rotate(0)}}
+@keyframes empRobotArmR{0%{transform:rotate(0)}25%{transform:rotate(90deg)}50%{transform:rotate(0)}75%{transform:rotate(-45deg)}100%{transform:rotate(0)}}
+@keyframes empRobotHead{0%,100%{transform:rotate(0)}33%{transform:rotate(-15deg)}66%{transform:rotate(15deg)}}
+
+.emperor-container[data-dance="wave"] .emp-body-group{
+  animation:empWave 2s ease-in-out infinite !important;
+}
+.emperor-container[data-dance="wave"] .emp-left-arm{
+  animation:empWaveArmL 2s ease-in-out infinite !important;
+}
+.emperor-container[data-dance="wave"] .emp-right-arm{
+  animation:empWaveArmR 2s ease-in-out infinite .5s !important;
+}
+@keyframes empWave{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-5px) rotate(-3deg)}75%{transform:translateY(-5px) rotate(3deg)}}
+@keyframes empWaveArmL{0%,100%{transform:rotate(0)}50%{transform:rotate(-70deg)}}
+@keyframes empWaveArmR{0%,100%{transform:rotate(0)}50%{transform:rotate(70deg)}}
+
+/* Emperor click effect */
+.emperor-container.clicked .emp-body-group{
+  animation:empSpin .6s ease-in-out !important;
+}
+@keyframes empSpin{0%{transform:rotateY(0)}100%{transform:rotateY(360deg)}}
+
+/* Emperor label */
+.emperor-label{
+  position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);
+  font-size:.7rem;color:var(--tx-2);letter-spacing:3px;white-space:nowrap;
+  text-shadow:0 0 10px var(--glow);opacity:.7;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SIDEBAR - PLAYLIST & LYRICS
+   ═══════════════════════════════════════════════════════ */
+.sidebar{
+  width:320px;background:var(--bg-2);
+  border-left:1px solid rgba(255,255,255,.08);
+  display:flex;flex-direction:column;
+  backdrop-filter:blur(20px);
+  transition:transform .4s ease, width .4s ease;
+  z-index:50;
+}
+.sidebar.collapsed{transform:translateX(320px);width:0;border:none;overflow:hidden}
+.sidebar-tabs{
+  display:flex;border-bottom:1px solid rgba(255,255,255,.08);
+}
+.sidebar-tab{
+  flex:1;padding:12px;text-align:center;cursor:pointer;
+  font-size:.8rem;color:var(--tx-2);transition:all .3s;
+  border-bottom:2px solid transparent;
+  background:transparent;border-top:none;border-left:none;border-right:none;
+  font-family:inherit;
+}
+.sidebar-tab:hover{color:var(--tx-1)}
+.sidebar-tab.active{color:var(--ac-1);border-bottom-color:var(--ac-1)}
+.sidebar-content{flex:1;overflow-y:auto;padding:12px}
+
+/* Playlist */
+.playlist-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:8px;cursor:pointer;
+  transition:all .2s;margin-bottom:4px;
+}
+.playlist-item:hover{background:var(--glass)}
+.playlist-item.active{background:var(--glass);border-left:3px solid var(--ac-1)}
+.playlist-item-idx{
+  font-size:.7rem;color:var(--tx-3);min-width:20px;text-align:center;
+}
+.playlist-item-info{flex:1;min-width:0}
+.playlist-item-name{
+  font-size:.85rem;color:var(--tx-1);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;
+}
+.playlist-item-dur{font-size:.7rem;color:var(--tx-3)}
+.playlist-item-remove{
+  opacity:0;color:var(--tx-3);cursor:pointer;transition:all .2s;
+  background:transparent;border:none;font-size:1rem;font-family:inherit;
+}
+.playlist-item:hover .playlist-item-remove{opacity:1}
+.playlist-item-remove:hover{color:var(--ac-3)}
+
+.playlist-empty{
+  text-align:center;padding:40px 20px;color:var(--tx-3);font-size:.85rem;
+}
+.playlist-empty svg{width:48px;height:48px;margin-bottom:12px;opacity:.3}
+
+/* Lyrics area */
+.lyrics-area{
+  text-align:center;padding:20px;color:var(--tx-2);
+  font-size:.9rem;line-height:2;
+}
+.lyrics-placeholder{color:var(--tx-3);font-size:.85rem;padding:40px 20px}
+
+/* Add music button */
+.add-music-btn{
+  margin:12px;padding:10px;border-radius:8px;
+  border:2px dashed var(--tx-3);background:transparent;
+  color:var(--tx-2);cursor:pointer;font-size:.8rem;
+  transition:all .3s;display:flex;align-items:center;
+  justify-content:center;gap:8px;font-family:inherit;
+}
+.add-music-btn:hover{border-color:var(--ac-1);color:var(--ac-1)}
+
+/* Sidebar toggle */
+.sidebar-toggle{
+  position:absolute;right:320px;top:50%;transform:translateY(-50%);
+  width:24px;height:60px;background:var(--bg-2);
+  border:1px solid rgba(255,255,255,.08);
+  border-right:none;border-radius:8px 0 0 8px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--tx-2);font-size:.7rem;z-index:51;transition:right .4s;
+}
+.sidebar.collapsed ~ .sidebar-toggle{right:0}
+.sidebar-toggle:hover{color:var(--ac-1)}
+
+/* ═══════════════════════════════════════════════════════
+   PLAYER CONTROLS
+   ═══════════════════════════════════════════════════════ */
+.controls-bar{
+  background:var(--bg-2);
+  border-top:1px solid rgba(255,255,255,.08);
+  padding:12px 24px 16px;
+  backdrop-filter:blur(20px);z-index:100;
+}
+
+/* Track Info */
+.track-info{
+  display:flex;align-items:center;gap:16px;margin-bottom:8px;
+}
+.track-art{
+  width:48px;height:48px;border-radius:8px;
+  background:var(--bg-3);display:flex;align-items:center;justify-content:center;
+  color:var(--ac-1);font-size:1.5rem;overflow:hidden;flex-shrink:0;
+}
+.track-art img{width:100%;height:100%;object-fit:cover}
+.track-details{flex:1;min-width:0}
+.track-name{
+  font-size:.95rem;font-weight:600;color:var(--tx-1);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.track-artist{font-size:.75rem;color:var(--tx-2);margin-top:2px}
+
+/* Progress Bar */
+.progress-area{
+  display:flex;align-items:center;gap:10px;margin-bottom:10px;
+}
+.progress-time{font-size:.7rem;color:var(--tx-2);min-width:40px}
+.progress-time.right{text-align:right}
+.progress-bar{
+  flex:1;height:5px;background:var(--bg-3);border-radius:3px;
+  cursor:pointer;position:relative;transition:height .2s;
+}
+.progress-bar:hover{height:7px}
+.progress-fill{
+  height:100%;background:linear-gradient(90deg,var(--ac-1),var(--ac-2));
+  border-radius:3px;position:relative;transition:width .1s linear;
+}
+.progress-fill::after{
+  content:'';position:absolute;right:-5px;top:50%;transform:translateY(-50%);
+  width:12px;height:12px;background:var(--ac-1);border-radius:50%;
+  opacity:0;transition:opacity .2s;box-shadow:0 0 8px var(--glow);
+}
+.progress-bar:hover .progress-fill::after{opacity:1}
+
+/* Main Controls */
+.main-controls{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.ctrl-btn{
+  background:transparent;border:none;color:var(--tx-2);
+  cursor:pointer;padding:8px;border-radius:50%;
+  transition:all .2s;display:flex;align-items:center;justify-content:center;
+  font-family:inherit;
+}
+.ctrl-btn:hover{color:var(--ac-1);background:var(--glass)}
+.ctrl-btn.active{color:var(--ac-1)}
+.ctrl-btn svg{width:20px;height:20px}
+.ctrl-btn.play-btn{
+  width:48px;height:48px;background:var(--ac-1);color:var(--bg-1);
+  border-radius:50%;margin:0 8px;
+}
+.ctrl-btn.play-btn:hover{
+  transform:scale(1.08);background:var(--ac-1);
+  box-shadow:0 0 20px var(--glow);
+}
+.ctrl-btn.play-btn svg{width:24px;height:24px}
+
+/* Volume */
+.volume-area{
+  display:flex;align-items:center;gap:6px;margin-left:auto;
+}
+.volume-slider{
+  width:80px;height:4px;-webkit-appearance:none;appearance:none;
+  background:var(--bg-3);border-radius:2px;cursor:pointer;
+}
+.volume-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:12px;height:12px;
+  background:var(--ac-1);border-radius:50%;cursor:pointer;
+}
+
+/* Extra Controls */
+.extra-controls{
+  display:flex;align-items:center;gap:4px;margin-left:16px;
+}
+.speed-display{
+  font-size:.65rem;color:var(--tx-3);padding:2px 6px;
+  border-radius:4px;border:1px solid var(--tx-3);cursor:pointer;
+  transition:all .2s;background:transparent;font-family:inherit;
+}
+.speed-display:hover{border-color:var(--ac-1);color:var(--ac-1)}
+
+/* Dance Style Selector */
+.dance-selector{
+  display:flex;align-items:center;gap:4px;margin-left:16px;
+}
+.dance-btn{
+  padding:3px 8px;border-radius:10px;
+  border:1px solid var(--tx-3);background:transparent;
+  color:var(--tx-3);cursor:pointer;font-size:.6rem;
+  transition:all .3s;font-family:inherit;
+}
+.dance-btn:hover,.dance-btn.active{
+  border-color:var(--ac-1);color:var(--ac-1);
+}
+
+/* EQ Visualization */
+.eq-bars{
+  display:flex;align-items:flex-end;gap:2px;height:24px;
+  margin-left:16px;
+}
+.eq-bar{
+  width:3px;background:var(--ac-1);border-radius:1px;
+  transition:height .1s ease;min-height:2px;opacity:.6;
+}
+
+/* Controls Row Layout */
+.controls-row{
+  display:flex;align-items:center;
+}
+
+/* ═══════════════════════════════════════════════════════
+   DROP ZONE OVERLAY
+   ═══════════════════════════════════════════════════════ */
+.drop-zone{
+  position:fixed;inset:0;z-index:9000;
+  background:rgba(0,0,0,.85);
+  display:none;align-items:center;justify-content:center;
+  flex-direction:column;
+}
+.drop-zone.active{display:flex}
+.drop-zone-inner{
+  border:3px dashed var(--ac-1);border-radius:24px;
+  padding:60px 80px;text-align:center;
+  animation:dropPulse 1.5s ease-in-out infinite;
+}
+.drop-zone-icon{font-size:4rem;margin-bottom:16px}
+.drop-zone-text{font-size:1.2rem;color:var(--ac-1)}
+@keyframes dropPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(.98)}}
+
+/* ═══════════════════════════════════════════════════════
+   TOAST NOTIFICATIONS
+   ═══════════════════════════════════════════════════════ */
+.toast-container{
+  position:fixed;bottom:100px;left:50%;transform:translateX(-50%);
+  z-index:10000;display:flex;flex-direction:column;gap:8px;
+  align-items:center;pointer-events:none;
+}
+.toast{
+  padding:10px 20px;border-radius:8px;
+  background:var(--bg-2);border:1px solid var(--ac-1);
+  color:var(--tx-1);font-size:.85rem;
+  backdrop-filter:blur(20px);
+  animation:toastIn .3s ease forwards;
+  pointer-events:auto;
+}
+.toast.out{animation:toastOut .3s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-20px)}}
+
+/* ═══════════════════════════════════════════════════════
+   SETTINGS MODAL
+   ═══════════════════════════════════════════════════════ */
+.modal-overlay{
+  position:fixed;inset:0;z-index:8000;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(5px);
+  display:none;align-items:center;justify-content:center;
+}
+.modal-overlay.show{display:flex}
+.modal{
+  background:var(--bg-2);border:1px solid rgba(255,255,255,.1);
+  border-radius:16px;padding:24px;min-width:360px;max-width:90vw;
+  backdrop-filter:blur(20px);
+}
+.modal-title{font-size:1.1rem;font-weight:700;color:var(--ac-1);margin-bottom:16px}
+.modal-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);
+}
+.modal-label{font-size:.85rem;color:var(--tx-2)}
+.modal-close{
+  margin-top:16px;width:100%;padding:10px;border-radius:8px;
+  border:1px solid var(--ac-1);background:transparent;
+  color:var(--ac-1);cursor:pointer;font-size:.85rem;
+  transition:all .3s;font-family:inherit;
+}
+.modal-close:hover{background:var(--ac-1);color:var(--bg-1)}
+
+/* ═══════════════════════════════════════════════════════
+   KEYBOARD SHORTCUTS OVERLAY
+   ═══════════════════════════════════════════════════════ */
+.shortcuts-info{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:var(--bg-2);border:1px solid rgba(255,255,255,.1);
+  border-radius:16px;padding:24px;backdrop-filter:blur(20px);
+  z-index:300;display:none;min-width:300px;
+}
+.shortcuts-info.show{display:block}
+.shortcut-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 0;font-size:.8rem;
+}
+.shortcut-key{
+  padding:3px 8px;border-radius:4px;background:var(--bg-3);
+  color:var(--ac-1);font-family:monospace;font-size:.75rem;
+}
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════ */
+@media(max-width:768px){
+  .sidebar{width:100%;position:absolute;right:0;top:0;bottom:0}
+  .sidebar.collapsed{transform:translateX(100%)}
+  .sidebar-toggle{right:0}
+  .sidebar:not(.collapsed) ~ .sidebar-toggle{right:100%}
+  .emperor-container{width:160px;height:240px}
+  .controls-bar{padding:8px 12px 12px}
+  .extra-controls,.dance-selector,.eq-bars{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ LOADING SCREEN ═══════════════════ -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-title">始皇顶级音乐播放器</div>
+  <div class="loading-sub">NEO MUSIC HELPER</div>
+  <div class="loading-bar"><div class="loading-bar-inner"></div></div>
+</div>
+
+<!-- ═══════════════════ DROP ZONE ═══════════════════ -->
+<div class="drop-zone" id="dropZone">
+  <div class="drop-zone-inner">
+    <div class="drop-zone-icon">&#x1F3B5;</div>
+    <div class="drop-zone-text">释放以添加音乐</div>
+  </div>
+</div>
+
+<!-- ═══════════════════ TOAST CONTAINER ═══════════════════ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ═══════════════════ MAIN APP ═══════════════════ -->
+<div class="app" id="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-brand">
+      <svg viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="13" stroke="var(--ac-1)" stroke-width="1.5"/>
+        <path d="M10 8 L10 20 M10 8 L18 14 L10 20" fill="var(--ac-1)"/>
+      </svg>
+      <div>
+        <div class="header-title">始皇顶级音乐播放器</div>
+        <div class="header-sub">Neo Music Helper</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="theme-btn" id="themeToggle">&#x1F3A8; 主题</button>
+      <button class="theme-btn" id="shortcutsBtn">&#x2328; 快捷键</button>
+      <button class="theme-btn" id="settingsBtn">&#x2699; 设置</button>
+    </div>
+    <!-- Theme Dropdown -->
+    <div class="theme-dropdown" id="themeDropdown">
+      <div class="theme-option active" data-theme="imperial">
+        <span class="theme-dot" style="background:linear-gradient(135deg,#ffd700,#c41e3a)"></span>帝王金
+      </div>
+      <div class="theme-option" data-theme="cyber">
+        <span class="theme-dot" style="background:linear-gradient(135deg,#00f0ff,#ff00ff)"></span>赛博霓虹
+      </div>
+      <div class="theme-option" data-theme="dark">
+        <span class="theme-dot" style="background:linear-gradient(135deg,#ffffff,#555555)"></span>暗夜星空
+      </div>
+      <div class="theme-option" data-theme="matrix">
+        <span class="theme-dot" style="background:linear-gradient(135deg,#00ff41,#005500)"></span>矩阵代码
+      </div>
+      <div class="theme-option" data-theme="sakura">
+        <span class="theme-dot" style="background:linear-gradient(135deg,#ff69b4,#c71585)"></span>樱花物语
+      </div>
+      <div class="theme-option" data-theme="ocean">
+        <span class="theme-dot" style="background:linear-gradient(135deg,#00bfff,#4169e1)"></span>深海幽蓝
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- Visualization Area -->
+    <div class="viz-area" id="vizArea">
+      <canvas id="particleCanvas"></canvas>
+      <canvas id="vizCanvas"></canvas>
+
+      <!-- EMPEROR CHARACTER -->
+      <div class="emperor-container" id="emperor">
+        <svg class="emperor-svg" viewBox="0 0 200 350">
+          <!-- Shadow -->
+          <ellipse class="emp-shadow" cx="100" cy="335" rx="55" ry="8"/>
+
+          <g class="emp-body-group">
+            <!-- Legs -->
+            <g class="emp-left-leg">
+              <rect class="emp-foot" x="76" y="275" width="16" height="50" rx="8"/>
+            </g>
+            <g class="emp-right-leg">
+              <rect class="emp-foot" x="108" y="275" width="16" height="50" rx="8"/>
+            </g>
+
+            <!-- Lower Robe -->
+            <g class="emp-robe-lower">
+              <path class="emp-robe" d="M58,200 Q55,290 52,295 L148,295 Q145,290 142,200 Z"/>
+              <path class="emp-robe-trim" d="M52,290 L148,290 L148,295 L52,295 Z"/>
+            </g>
+
+            <!-- Upper Robe / Torso -->
+            <path class="emp-robe" d="M62,138 L55,205 L145,205 L138,138 Z"/>
+            <path class="emp-robe-trim" d="M55,198 L145,198 L145,205 L55,205 Z"/>
+
+            <!-- Belt -->
+            <rect class="emp-belt" x="58" y="190" width="84" height="8" rx="3"/>
+            <circle class="emp-crown-jewel" cx="100" cy="194" r="4"/>
+
+            <!-- Dragon Emblem -->
+            <text class="emp-dragon" x="100" y="178" text-anchor="middle">龍</text>
+
+            <!-- Left Arm -->
+            <g class="emp-left-arm">
+              <path class="emp-sleeve" d="M62,140 L25,190 L35,200 L55,175 L58,155 Z"/>
+              <circle class="emp-hand" cx="28" cy="196" r="7"/>
+            </g>
+
+            <!-- Right Arm -->
+            <g class="emp-right-arm">
+              <path class="emp-sleeve" d="M138,140 L175,190 L165,200 L145,175 L142,155 Z"/>
+              <circle class="emp-hand" cx="172" cy="196" r="7"/>
+            </g>
+
+            <!-- Head Group -->
+            <g class="emp-head-group">
+              <!-- Neck -->
+              <rect class="emp-head" x="92" y="118" width="16" height="22" rx="6"/>
+              <!-- Head -->
+              <circle class="emp-head" cx="100" cy="105" r="28"/>
+              <!-- Eyes -->
+              <ellipse class="emp-eye" cx="90" cy="101" rx="3.5" ry="4"/>
+              <ellipse class="emp-eye" cx="110" cy="101" rx="3.5" ry="4"/>
+              <!-- Eye shine -->
+              <circle fill="white" cx="91" cy="100" r="1.2"/>
+              <circle fill="white" cx="111" cy="100" r="1.2"/>
+              <!-- Eyebrows -->
+              <path stroke="var(--ac-4)" fill="none" stroke-width="2" stroke-linecap="round"
+                    d="M84,94 Q90,90 96,94"/>
+              <path stroke="var(--ac-4)" fill="none" stroke-width="2" stroke-linecap="round"
+                    d="M104,94 Q110,90 116,94"/>
+              <!-- Nose -->
+              <path stroke="var(--ac-4)" fill="none" stroke-width="1.5" stroke-linecap="round"
+                    d="M98,106 Q100,110 102,106"/>
+              <!-- Mouth -->
+              <path class="emp-mouth" d="M92,115 Q100,122 108,115"/>
+              <!-- Mustache -->
+              <path class="emp-beard" d="M88,113 Q94,117 100,113 Q106,117 112,113 Q106,115 100,112 Q94,115 88,113" fill="var(--tx-3)"/>
+              <!-- Beard -->
+              <path class="emp-beard" d="M90,120 Q95,138 100,140 Q105,138 110,120 Q105,132 100,134 Q95,132 90,120" fill="var(--tx-3)" opacity=".5"/>
+
+              <!-- Crown Group -->
+              <g class="emp-crown-group">
+                <!-- Crown Base -->
+                <rect class="emp-crown" x="72" y="72" width="56" height="18" rx="3"/>
+                <!-- Crown Top -->
+                <rect class="emp-crown" x="80" y="60" width="40" height="15" rx="2"/>
+                <!-- Crown Peak -->
+                <rect class="emp-crown" x="92" y="48" width="16" height="16" rx="3"/>
+                <!-- Crown Jewel -->
+                <circle class="emp-crown-jewel" cx="100" cy="56" r="4"/>
+                <!-- Crown Pattern -->
+                <line stroke="var(--ac-3)" stroke-width="1" x1="80" y1="68" x2="120" y2="68" opacity=".5"/>
+                <line stroke="var(--ac-3)" stroke-width="1" x1="72" y1="82" x2="128" y2="82" opacity=".5"/>
+
+                <!-- Bead Strings - Left -->
+                <g class="emp-bead-left">
+                  <line class="emp-bead-string" x1="76" y1="90" x2="76" y2="112"/>
+                  <circle class="emp-bead" cx="76" cy="94" r="2.5"/>
+                  <circle class="emp-bead" cx="76" cy="100" r="2.5"/>
+                  <circle class="emp-bead" cx="76" cy="106" r="2.5"/>
+                  <circle class="emp-bead" cx="76" cy="112" r="2.5"/>
+                </g>
+                <!-- Bead Strings - Right -->
+                <g class="emp-bead-right">
+                  <line class="emp-bead-string" x1="124" y1="90" x2="124" y2="112"/>
+                  <circle class="emp-bead" cx="124" cy="94" r="2.5"/>
+                  <circle class="emp-bead" cx="124" cy="100" r="2.5"/>
+                  <circle class="emp-bead" cx="124" cy="106" r="2.5"/>
+                  <circle class="emp-bead" cx="124" cy="112" r="2.5"/>
+                </g>
+              </g>
+            </g>
+          </g>
+        </svg>
+        <div class="emperor-label">秦 始 皇</div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-tabs">
+        <button class="sidebar-tab active" data-tab="playlist">&#x1F3B5; 播放列表</button>
+        <button class="sidebar-tab" data-tab="lyrics">&#x1F4DC; 歌词</button>
+        <button class="sidebar-tab" data-tab="info">&#x2139; 信息</button>
+      </div>
+      <div class="sidebar-content" id="sidebarContent">
+        <!-- Playlist Tab (default) -->
+        <div id="playlistContent">
+          <div class="playlist-empty" id="playlistEmpty">
+            <svg viewBox="0 0 48 48" fill="none" stroke="var(--tx-3)" stroke-width="1.5">
+              <circle cx="24" cy="24" r="20"/>
+              <path d="M20 16v16l14-8z"/>
+            </svg>
+            <div>暂无音乐</div>
+            <div style="font-size:.75rem;margin-top:8px;color:var(--tx-3)">
+              点击下方按钮或拖拽文件到此处
+            </div>
+          </div>
+          <div id="playlistList"></div>
+        </div>
+        <div id="lyricsContent" style="display:none">
+          <div class="lyrics-placeholder">
+            &#x1F3B6; 暂无歌词<br><br>
+            <span style="font-size:.75rem">播放音乐时将在此显示歌词</span>
+          </div>
+        </div>
+        <div id="infoContent" style="display:none">
+          <div style="padding:16px;font-size:.8rem;color:var(--tx-2);line-height:1.8">
+            <h3 style="color:var(--ac-1);margin-bottom:12px">始皇顶级音乐播放器</h3>
+            <p><strong>版本：</strong>1.0.0 Supreme Edition</p>
+            <p><strong>代号：</strong>Neo Music Helper</p>
+            <hr style="border:none;border-top:1px solid rgba(255,255,255,.08);margin:12px 0">
+            <p style="color:var(--tx-3)">功能列表：</p>
+            <ul style="padding-left:16px;margin-top:8px">
+              <li>6种主题风格切换</li>
+              <li>始皇动态跳舞效果</li>
+              <li>5种舞蹈风格</li>
+              <li>环形频谱可视化</li>
+              <li>粒子特效系统</li>
+              <li>播放列表管理</li>
+              <li>拖拽添加音乐</li>
+              <li>播放速度控制</li>
+              <li>随机/循环播放</li>
+              <li>快捷键支持</li>
+              <li>均衡器可视化</li>
+            </ul>
+            <hr style="border:none;border-top:1px solid rgba(255,255,255,.08);margin:12px 0">
+            <p style="color:var(--tx-3);font-size:.7rem">
+              "朕统六合，车同轨，书同文，乐同律。" — 秦始皇
+            </p>
+          </div>
+        </div>
+      </div>
+      <button class="add-music-btn" id="addMusicBtn">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <line x1="8" y1="2" x2="8" y2="14"/><line x1="2" y1="8" x2="14" y2="8"/>
+        </svg>
+        添加音乐文件
+      </button>
+    </aside>
+    <button class="sidebar-toggle" id="sidebarToggle">&#x25C0;</button>
+  </div>
+
+  <!-- CONTROLS BAR -->
+  <div class="controls-bar">
+    <!-- Track Info & Progress -->
+    <div class="track-info">
+      <div class="track-art" id="trackArt">&#x266B;</div>
+      <div class="track-details">
+        <div class="track-name" id="trackName">等待播放...</div>
+        <div class="track-artist" id="trackArtist">添加音乐开始体验</div>
+      </div>
+    </div>
+    <div class="progress-area">
+      <span class="progress-time" id="currentTime">0:00</span>
+      <div class="progress-bar" id="progressBar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <span class="progress-time right" id="totalTime">0:00</span>
+    </div>
+    <!-- Controls Row -->
+    <div class="controls-row">
+      <button class="ctrl-btn" id="shuffleBtn" title="随机播放 (S)">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 5h4l4 5-4 5H2"/><path d="M2 15h4l4-5-4-5"/><path d="M14 5h3v0"/><path d="M14 15h3"/>
+          <polyline points="15,2 18,5 15,8"/><polyline points="15,12 18,15 15,18"/>
+        </svg>
+      </button>
+      <button class="ctrl-btn" id="prevBtn" title="上一首 (Left)">
+        <svg viewBox="0 0 20 20" fill="currentColor"><rect x="2" y="4" width="3" height="12" rx="1"/><path d="M18 4L8 10l10 6z"/></svg>
+      </button>
+      <button class="ctrl-btn play-btn" id="playBtn" title="播放/暂停 (Space)">
+        <svg viewBox="0 0 24 24" fill="currentColor" id="playIcon"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <button class="ctrl-btn" id="nextBtn" title="下一首 (Right)">
+        <svg viewBox="0 0 20 20" fill="currentColor"><rect x="15" y="4" width="3" height="12" rx="1"/><path d="M2 4l10 6-10 6z"/></svg>
+      </button>
+      <button class="ctrl-btn" id="repeatBtn" title="循环模式 (R)">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 7h14l-3-3"/><path d="M17 13H3l3 3"/>
+        </svg>
+      </button>
+
+      <!-- Volume -->
+      <div class="volume-area">
+        <button class="ctrl-btn" id="muteBtn" title="静音 (M)">
+          <svg viewBox="0 0 20 20" fill="currentColor" id="volumeIcon">
+            <path d="M3 7h3l4-4v14l-4-4H3V7z"/>
+            <path d="M14 7c1.5 1 2 2.5 2 3s-.5 2-2 3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="80">
+      </div>
+
+      <!-- Extra Controls -->
+      <div class="extra-controls">
+        <button class="speed-display" id="speedBtn" title="播放速度">1.0x</button>
+      </div>
+
+      <!-- Dance Style -->
+      <div class="dance-selector">
+        <button class="dance-btn active" data-dance="default" title="默认舞蹈">默认</button>
+        <button class="dance-btn" data-dance="hiphop" title="嘻哈">嘻哈</button>
+        <button class="dance-btn" data-dance="disco" title="迪斯科">迪斯科</button>
+        <button class="dance-btn" data-dance="robot" title="机器人">机器人</button>
+        <button class="dance-btn" data-dance="wave" title="波浪">波浪</button>
+      </div>
+
+      <!-- EQ Mini Bars -->
+      <div class="eq-bars" id="eqBars"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SHORTCUTS OVERLAY -->
+<div class="shortcuts-info" id="shortcutsInfo">
+  <div style="font-size:1rem;font-weight:700;color:var(--ac-1);margin-bottom:16px">快捷键</div>
+  <div class="shortcut-row"><span>播放/暂停</span><span class="shortcut-key">Space</span></div>
+  <div class="shortcut-row"><span>上一首</span><span class="shortcut-key">&#x2190;</span></div>
+  <div class="shortcut-row"><span>下一首</span><span class="shortcut-key">&#x2192;</span></div>
+  <div class="shortcut-row"><span>音量增大</span><span class="shortcut-key">&#x2191;</span></div>
+  <div class="shortcut-row"><span>音量减小</span><span class="shortcut-key">&#x2193;</span></div>
+  <div class="shortcut-row"><span>静音</span><span class="shortcut-key">M</span></div>
+  <div class="shortcut-row"><span>随机播放</span><span class="shortcut-key">S</span></div>
+  <div class="shortcut-row"><span>循环模式</span><span class="shortcut-key">R</span></div>
+  <div class="shortcut-row"><span>添加文件</span><span class="shortcut-key">O</span></div>
+  <div class="shortcut-row"><span>切换侧栏</span><span class="shortcut-key">L</span></div>
+  <div class="shortcut-row"><span>关闭此面板</span><span class="shortcut-key">?</span></div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <div class="modal-title">&#x2699; 设置</div>
+    <div class="modal-row">
+      <span class="modal-label">频谱样式</span>
+      <select id="vizStyle" style="background:var(--bg-3);color:var(--tx-1);border:1px solid var(--tx-3);padding:4px 8px;border-radius:4px;font-family:inherit">
+        <option value="circular">环形频谱</option>
+        <option value="bars">条形频谱</option>
+        <option value="wave">波形</option>
+        <option value="dots">粒子频谱</option>
+      </select>
+    </div>
+    <div class="modal-row">
+      <span class="modal-label">粒子特效</span>
+      <label style="cursor:pointer">
+        <input type="checkbox" id="particlesToggle" checked style="accent-color:var(--ac-1)"> 开启
+      </label>
+    </div>
+    <div class="modal-row">
+      <span class="modal-label">频谱灵敏度</span>
+      <input type="range" id="sensitivitySlider" min="1" max="5" value="3"
+             style="width:100px;accent-color:var(--ac-1)">
+    </div>
+    <div class="modal-row">
+      <span class="modal-label">背景脉冲效果</span>
+      <label style="cursor:pointer">
+        <input type="checkbox" id="bgPulseToggle" checked style="accent-color:var(--ac-1)"> 开启
+      </label>
+    </div>
+    <button class="modal-close" id="closeSettings">关闭</button>
+  </div>
+</div>
+
+<!-- HIDDEN FILE INPUT -->
+<input type="file" id="fileInput" accept="audio/*" multiple style="display:none">
+
+<!-- ═══════════════════════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════════════════════ -->
+<script>
+// ───────────────────────── STATE ─────────────────────────
+const state = {
+  playlist: [],
+  currentIndex: -1,
+  isPlaying: false,
+  shuffle: false,
+  repeat: 'none', // none, one, all
+  volume: 0.8,
+  muted: false,
+  speed: 1.0,
+  danceStyle: 'default',
+  vizStyle: 'circular',
+  particles: true,
+  bgPulse: true,
+  sensitivity: 3,
+  sidebarOpen: true,
+  activeTab: 'playlist',
+};
+
+// ───────────────────────── AUDIO ENGINE ─────────────────────────
+let audioCtx = null;
+let analyser = null;
+let sourceNode = null;
+const audio = new Audio();
+audio.crossOrigin = 'anonymous';
+audio.preload = 'auto';
+
+function initAudioContext() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 2048;
+  analyser.smoothingTimeConstant = 0.8;
+  sourceNode = audioCtx.createMediaElementSource(audio);
+  sourceNode.connect(analyser);
+  analyser.connect(audioCtx.destination);
+}
+
+// ───────────────────────── DOM REFS ─────────────────────────
+const $ = id => document.getElementById(id);
+const emperor = $('emperor');
+const playBtn = $('playBtn');
+const playIcon = $('playIcon');
+const prevBtn = $('prevBtn');
+const nextBtn = $('nextBtn');
+const shuffleBtn = $('shuffleBtn');
+const repeatBtn = $('repeatBtn');
+const muteBtn = $('muteBtn');
+const volumeSlider = $('volumeSlider');
+const speedBtn = $('speedBtn');
+const progressBar = $('progressBar');
+const progressFill = $('progressFill');
+const currentTimeEl = $('currentTime');
+const totalTimeEl = $('totalTime');
+const trackName = $('trackName');
+const trackArtist = $('trackArtist');
+const fileInput = $('fileInput');
+const themeDropdown = $('themeDropdown');
+const vizCanvas = $('vizCanvas');
+const particleCanvas = $('particleCanvas');
+const vizCtx = vizCanvas.getContext('2d');
+const partCtx = particleCanvas.getContext('2d');
+const eqBarsEl = $('eqBars');
+const playlistList = $('playlistList');
+const playlistEmpty = $('playlistEmpty');
+const sidebar = $('sidebar');
+
+// ───────────────────────── HELPERS ─────────────────────────
+function formatTime(sec) {
+  if (!sec || !isFinite(sec)) return '0:00';
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+function toast(msg) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  $('toastContainer').appendChild(el);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 300); }, 2500);
+}
+
+function getThemeColors() {
+  const s = getComputedStyle(document.documentElement);
+  return {
+    ac1: s.getPropertyValue('--ac-1').trim(),
+    ac2: s.getPropertyValue('--ac-2').trim(),
+    ac3: s.getPropertyValue('--ac-3').trim(),
+    bg1: s.getPropertyValue('--bg-1').trim(),
+    glow: s.getPropertyValue('--glow').trim(),
+  };
+}
+
+function hexToRgb(hex) {
+  hex = hex.replace('#', '');
+  if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+  const n = parseInt(hex, 16);
+  return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+}
+
+// ───────────────────────── PLAYLIST MANAGEMENT ─────────────────────────
+function addFiles(files) {
+  initAudioContext();
+  for (const file of files) {
+    if (!file.type.startsWith('audio/')) continue;
+    const url = URL.createObjectURL(file);
+    const name = file.name.replace(/\.[^.]+$/, '');
+    state.playlist.push({ name, url, file, duration: 0 });
+  }
+  renderPlaylist();
+  if (state.currentIndex === -1 && state.playlist.length > 0) {
+    loadTrack(0);
+  }
+  toast(`已添加 ${files.length} 首音乐`);
+}
+
+function renderPlaylist() {
+  playlistEmpty.style.display = state.playlist.length ? 'none' : 'block';
+  playlistList.innerHTML = '';
+  state.playlist.forEach((track, i) => {
+    const el = document.createElement('div');
+    el.className = 'playlist-item' + (i === state.currentIndex ? ' active' : '');
+    el.innerHTML = `
+      <span class="playlist-item-idx">${i + 1}</span>
+      <div class="playlist-item-info">
+        <div class="playlist-item-name">${track.name}</div>
+        <div class="playlist-item-dur">${track.duration ? formatTime(track.duration) : '--:--'}</div>
+      </div>
+      <button class="playlist-item-remove" data-idx="${i}">&times;</button>
+    `;
+    el.addEventListener('click', (e) => {
+      if (e.target.classList.contains('playlist-item-remove')) {
+        e.stopPropagation();
+        removeTrack(parseInt(e.target.dataset.idx));
+        return;
+      }
+      loadTrack(i);
+      play();
+    });
+    playlistList.appendChild(el);
+  });
+}
+
+function removeTrack(idx) {
+  if (idx === state.currentIndex) {
+    audio.pause();
+    state.isPlaying = false;
+    updatePlayButton();
+  }
+  URL.revokeObjectURL(state.playlist[idx].url);
+  state.playlist.splice(idx, 1);
+  if (state.currentIndex >= idx) {
+    state.currentIndex = Math.max(-1, state.currentIndex - 1);
+  }
+  if (state.playlist.length === 0) state.currentIndex = -1;
+  renderPlaylist();
+}
+
+function loadTrack(idx) {
+  if (idx < 0 || idx >= state.playlist.length) return;
+  state.currentIndex = idx;
+  const track = state.playlist[idx];
+  audio.src = track.url;
+  audio.load();
+  trackName.textContent = track.name;
+  trackArtist.textContent = `曲目 ${idx + 1} / ${state.playlist.length}`;
+  renderPlaylist();
+
+  // Try to get duration
+  audio.addEventListener('loadedmetadata', () => {
+    track.duration = audio.duration;
+    totalTimeEl.textContent = formatTime(audio.duration);
+    renderPlaylist();
+  }, { once: true });
+}
+
+// ───────────────────────── PLAYBACK ─────────────────────────
+function play() {
+  if (state.playlist.length === 0) return;
+  initAudioContext();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  audio.play();
+  state.isPlaying = true;
+  updatePlayButton();
+  emperor.classList.add('dancing');
+}
+
+function pause() {
+  audio.pause();
+  state.isPlaying = false;
+  updatePlayButton();
+  emperor.classList.remove('dancing');
+}
+
+function togglePlay() {
+  if (state.isPlaying) pause(); else play();
+}
+
+function playNext() {
+  if (state.playlist.length === 0) return;
+  let next;
+  if (state.shuffle) {
+    next = Math.floor(Math.random() * state.playlist.length);
+    if (next === state.currentIndex && state.playlist.length > 1) {
+      next = (next + 1) % state.playlist.length;
+    }
+  } else {
+    next = state.currentIndex + 1;
+    if (next >= state.playlist.length) {
+      if (state.repeat === 'all') next = 0;
+      else { pause(); return; }
+    }
+  }
+  loadTrack(next);
+  play();
+}
+
+function playPrev() {
+  if (state.playlist.length === 0) return;
+  if (audio.currentTime > 3) {
+    audio.currentTime = 0;
+    return;
+  }
+  let prev = state.currentIndex - 1;
+  if (prev < 0) prev = state.playlist.length - 1;
+  loadTrack(prev);
+  play();
+}
+
+function updatePlayButton() {
+  playIcon.innerHTML = state.isPlaying
+    ? '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>'
+    : '<path d="M8 5v14l11-7z"/>';
+}
+
+// ───────────────────────── AUDIO EVENTS ─────────────────────────
+audio.addEventListener('ended', () => {
+  if (state.repeat === 'one') {
+    audio.currentTime = 0;
+    audio.play();
+  } else {
+    playNext();
+  }
+});
+
+audio.addEventListener('timeupdate', () => {
+  if (!audio.duration) return;
+  const pct = (audio.currentTime / audio.duration) * 100;
+  progressFill.style.width = pct + '%';
+  currentTimeEl.textContent = formatTime(audio.currentTime);
+});
+
+// Progress bar click to seek
+progressBar.addEventListener('click', (e) => {
+  if (!audio.duration) return;
+  const rect = progressBar.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  audio.currentTime = pct * audio.duration;
+});
+
+// ───────────────────────── VOLUME ─────────────────────────
+volumeSlider.addEventListener('input', () => {
+  state.volume = volumeSlider.value / 100;
+  audio.volume = state.muted ? 0 : state.volume;
+});
+
+function toggleMute() {
+  state.muted = !state.muted;
+  audio.volume = state.muted ? 0 : state.volume;
+  $('volumeIcon').innerHTML = state.muted
+    ? '<path d="M3 7h3l4-4v14l-4-4H3V7z"/><line x1="14" y1="8" x2="19" y2="12" stroke="currentColor" stroke-width="1.5"/><line x1="19" y1="8" x2="14" y2="12" stroke="currentColor" stroke-width="1.5"/>'
+    : '<path d="M3 7h3l4-4v14l-4-4H3V7z"/><path d="M14 7c1.5 1 2 2.5 2 3s-.5 2-2 3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>';
+  muteBtn.classList.toggle('active', state.muted);
+}
+
+// ───────────────────────── SPEED ─────────────────────────
+const speeds = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+let speedIdx = 2;
+speedBtn.addEventListener('click', () => {
+  speedIdx = (speedIdx + 1) % speeds.length;
+  state.speed = speeds[speedIdx];
+  audio.playbackRate = state.speed;
+  speedBtn.textContent = state.speed + 'x';
+  toast(`播放速度: ${state.speed}x`);
+});
+
+// ───────────────────────── SHUFFLE & REPEAT ─────────────────────────
+shuffleBtn.addEventListener('click', () => {
+  state.shuffle = !state.shuffle;
+  shuffleBtn.classList.toggle('active', state.shuffle);
+  toast(state.shuffle ? '随机播放: 开启' : '随机播放: 关闭');
+});
+
+repeatBtn.addEventListener('click', () => {
+  const modes = ['none', 'all', 'one'];
+  const labels = { none: '关闭', all: '列表循环', one: '单曲循环' };
+  const idx = (modes.indexOf(state.repeat) + 1) % modes.length;
+  state.repeat = modes[idx];
+  repeatBtn.classList.toggle('active', state.repeat !== 'none');
+  if (state.repeat === 'one') {
+    repeatBtn.querySelector('svg').innerHTML =
+      '<path d="M3 7h14l-3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<path d="M17 13H3l3 3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<text x="10" y="12" font-size="6" fill="currentColor" text-anchor="middle" font-weight="bold">1</text>';
+  } else {
+    repeatBtn.querySelector('svg').innerHTML =
+      '<path d="M3 7h14l-3-3"/><path d="M17 13H3l3 3"/>';
+  }
+  toast(`循环模式: ${labels[state.repeat]}`);
+});
+
+// ───────────────────────── CONTROLS WIRING ─────────────────────────
+playBtn.addEventListener('click', togglePlay);
+prevBtn.addEventListener('click', playPrev);
+nextBtn.addEventListener('click', playNext);
+muteBtn.addEventListener('click', toggleMute);
+$('addMusicBtn').addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', (e) => { addFiles(e.target.files); fileInput.value = ''; });
+
+// ───────────────────────── THEME SWITCHING ─────────────────────────
+$('themeToggle').addEventListener('click', (e) => {
+  e.stopPropagation();
+  themeDropdown.classList.toggle('show');
+});
+
+document.querySelectorAll('.theme-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    const theme = opt.dataset.theme;
+    document.documentElement.setAttribute('data-theme', theme);
+    document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+    opt.classList.add('active');
+    themeDropdown.classList.remove('show');
+    toast(`主题: ${opt.textContent.trim()}`);
+  });
+});
+
+document.addEventListener('click', () => themeDropdown.classList.remove('show'));
+
+// ───────────────────────── SIDEBAR ─────────────────────────
+$('sidebarToggle').addEventListener('click', () => {
+  state.sidebarOpen = !state.sidebarOpen;
+  sidebar.classList.toggle('collapsed', !state.sidebarOpen);
+  $('sidebarToggle').innerHTML = state.sidebarOpen ? '&#x25C0;' : '&#x25B6;';
+});
+
+document.querySelectorAll('.sidebar-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.sidebar-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    state.activeTab = tab.dataset.tab;
+    $('playlistContent').style.display = state.activeTab === 'playlist' ? 'block' : 'none';
+    $('lyricsContent').style.display = state.activeTab === 'lyrics' ? 'block' : 'none';
+    $('infoContent').style.display = state.activeTab === 'info' ? 'block' : 'none';
+  });
+});
+
+// ───────────────────────── DANCE STYLE ─────────────────────────
+document.querySelectorAll('.dance-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.dance-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.danceStyle = btn.dataset.dance;
+    if (state.danceStyle === 'default') {
+      emperor.removeAttribute('data-dance');
+    } else {
+      emperor.setAttribute('data-dance', state.danceStyle);
+    }
+    toast(`舞蹈: ${btn.textContent}`);
+  });
+});
+
+// Emperor click easter egg
+emperor.addEventListener('click', () => {
+  emperor.classList.add('clicked');
+  toast('秦始皇：天下大势，分久必合！');
+  setTimeout(() => emperor.classList.remove('clicked'), 600);
+});
+
+// ───────────────────────── DRAG & DROP ─────────────────────────
+const dropZone = $('dropZone');
+let dragCounter = 0;
+
+document.addEventListener('dragenter', (e) => {
+  e.preventDefault();
+  dragCounter++;
+  dropZone.classList.add('active');
+});
+
+document.addEventListener('dragleave', (e) => {
+  e.preventDefault();
+  dragCounter--;
+  if (dragCounter <= 0) { dropZone.classList.remove('active'); dragCounter = 0; }
+});
+
+document.addEventListener('dragover', (e) => e.preventDefault());
+
+document.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dragCounter = 0;
+  dropZone.classList.remove('active');
+  if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
+});
+
+// ───────────────────────── KEYBOARD SHORTCUTS ─────────────────────────
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  switch (e.code) {
+    case 'Space':
+      e.preventDefault();
+      togglePlay();
+      break;
+    case 'ArrowLeft':
+      e.preventDefault();
+      playPrev();
+      break;
+    case 'ArrowRight':
+      e.preventDefault();
+      playNext();
+      break;
+    case 'ArrowUp':
+      e.preventDefault();
+      state.volume = Math.min(1, state.volume + 0.05);
+      volumeSlider.value = state.volume * 100;
+      audio.volume = state.muted ? 0 : state.volume;
+      break;
+    case 'ArrowDown':
+      e.preventDefault();
+      state.volume = Math.max(0, state.volume - 0.05);
+      volumeSlider.value = state.volume * 100;
+      audio.volume = state.muted ? 0 : state.volume;
+      break;
+    case 'KeyM':
+      toggleMute();
+      break;
+    case 'KeyS':
+      shuffleBtn.click();
+      break;
+    case 'KeyR':
+      repeatBtn.click();
+      break;
+    case 'KeyO':
+      fileInput.click();
+      break;
+    case 'KeyL':
+      $('sidebarToggle').click();
+      break;
+    case 'Slash':
+      if (e.shiftKey) {
+        $('shortcutsInfo').classList.toggle('show');
+      }
+      break;
+  }
+});
+
+// ───────────────────────── SETTINGS ─────────────────────────
+$('settingsBtn').addEventListener('click', () => $('settingsModal').classList.add('show'));
+$('closeSettings').addEventListener('click', () => $('settingsModal').classList.remove('show'));
+$('settingsModal').addEventListener('click', (e) => {
+  if (e.target === $('settingsModal')) $('settingsModal').classList.remove('show');
+});
+
+$('vizStyle').addEventListener('change', (e) => {
+  state.vizStyle = e.target.value;
+  toast(`频谱样式: ${e.target.options[e.target.selectedIndex].text}`);
+});
+$('particlesToggle').addEventListener('change', (e) => { state.particles = e.target.checked; });
+$('sensitivitySlider').addEventListener('input', (e) => { state.sensitivity = parseInt(e.target.value); });
+$('bgPulseToggle').addEventListener('change', (e) => { state.bgPulse = e.target.checked; });
+$('shortcutsBtn').addEventListener('click', () => $('shortcutsInfo').classList.toggle('show'));
+
+// ───────────────────────── CANVAS SIZING ─────────────────────────
+function resizeCanvases() {
+  const area = $('vizArea');
+  const w = area.clientWidth;
+  const h = area.clientHeight;
+  vizCanvas.width = w * devicePixelRatio;
+  vizCanvas.height = h * devicePixelRatio;
+  vizCanvas.style.width = w + 'px';
+  vizCanvas.style.height = h + 'px';
+  vizCtx.scale(devicePixelRatio, devicePixelRatio);
+  particleCanvas.width = w * devicePixelRatio;
+  particleCanvas.height = h * devicePixelRatio;
+  particleCanvas.style.width = w + 'px';
+  particleCanvas.style.height = h + 'px';
+  partCtx.scale(devicePixelRatio, devicePixelRatio);
+}
+window.addEventListener('resize', resizeCanvases);
+
+// ───────────────────────── EQ MINI BARS ─────────────────────────
+const EQ_COUNT = 16;
+for (let i = 0; i < EQ_COUNT; i++) {
+  const bar = document.createElement('div');
+  bar.className = 'eq-bar';
+  bar.style.height = '2px';
+  eqBarsEl.appendChild(bar);
+}
+
+function updateEqBars(freqData) {
+  const bars = eqBarsEl.children;
+  const step = Math.floor(freqData.length / EQ_COUNT);
+  for (let i = 0; i < EQ_COUNT; i++) {
+    const val = freqData[i * step] || 0;
+    const h = Math.max(2, (val / 255) * 24);
+    bars[i].style.height = h + 'px';
+  }
+}
+
+// ───────────────────────── PARTICLES ─────────────────────────
+const particles = [];
+const MAX_PARTICLES = 80;
+
+class Particle {
+  constructor(w, h) {
+    this.reset(w, h);
+  }
+  reset(w, h) {
+    this.x = Math.random() * w;
+    this.y = h + 10;
+    this.vx = (Math.random() - 0.5) * 1.5;
+    this.vy = -(Math.random() * 2 + 0.5);
+    this.size = Math.random() * 3 + 1;
+    this.alpha = Math.random() * 0.6 + 0.2;
+    this.decay = Math.random() * 0.005 + 0.002;
+    this.w = w;
+    this.h = h;
+  }
+  update(energy) {
+    this.x += this.vx + (Math.random() - 0.5) * 0.5;
+    this.vy -= 0.01;
+    this.y += this.vy * (1 + energy * 2);
+    this.alpha -= this.decay;
+    if (this.alpha <= 0 || this.y < -10) {
+      this.reset(this.w, this.h);
+    }
+  }
+}
+
+function renderParticles(energy) {
+  const w = particleCanvas.width / devicePixelRatio;
+  const h = particleCanvas.height / devicePixelRatio;
+  partCtx.clearRect(0, 0, w, h);
+
+  if (!state.particles) return;
+
+  // Spawn particles based on energy
+  const spawnCount = Math.floor(energy * 3);
+  for (let i = 0; i < spawnCount && particles.length < MAX_PARTICLES; i++) {
+    particles.push(new Particle(w, h));
+  }
+
+  const colors = getThemeColors();
+  const rgb = hexToRgb(colors.ac1);
+
+  particles.forEach(p => {
+    p.update(energy);
+    partCtx.beginPath();
+    partCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    partCtx.fillStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},${p.alpha})`;
+    partCtx.fill();
+  });
+
+  // Remove dead particles
+  for (let i = particles.length - 1; i >= 0; i--) {
+    if (particles[i].alpha <= 0) particles.splice(i, 1);
+  }
+}
+
+// ───────────────────────── VISUALIZATION RENDERERS ─────────────────────────
+
+function drawCircularSpectrum(cx, cy, freqData, colors, w, h) {
+  const barCount = 120;
+  const innerRadius = Math.min(w, h) * 0.18;
+  const maxBarHeight = Math.min(w, h) * 0.22;
+  const step = Math.floor(freqData.length / barCount);
+
+  const rgb1 = hexToRgb(colors.ac1);
+  const rgb2 = hexToRgb(colors.ac2);
+  const rgb3 = hexToRgb(colors.ac3);
+
+  for (let i = 0; i < barCount; i++) {
+    const angle = (i / barCount) * Math.PI * 2 - Math.PI / 2;
+    const val = freqData[i * step] || 0;
+    const barH = (val / 255) * maxBarHeight * state.sensitivity * 0.5;
+
+    if (barH < 1) continue;
+
+    const x1 = cx + Math.cos(angle) * innerRadius;
+    const y1 = cy + Math.sin(angle) * innerRadius;
+    const x2 = cx + Math.cos(angle) * (innerRadius + barH);
+    const y2 = cy + Math.sin(angle) * (innerRadius + barH);
+
+    const t = i / barCount;
+    let r, g, b;
+    if (t < 0.5) {
+      const lt = t * 2;
+      r = rgb1.r + (rgb2.r - rgb1.r) * lt;
+      g = rgb1.g + (rgb2.g - rgb1.g) * lt;
+      b = rgb1.b + (rgb2.b - rgb1.b) * lt;
+    } else {
+      const lt = (t - 0.5) * 2;
+      r = rgb2.r + (rgb3.r - rgb2.r) * lt;
+      g = rgb2.g + (rgb3.g - rgb2.g) * lt;
+      b = rgb2.b + (rgb3.b - rgb2.b) * lt;
+    }
+
+    const alpha = 0.4 + (val / 255) * 0.6;
+
+    vizCtx.beginPath();
+    vizCtx.moveTo(x1, y1);
+    vizCtx.lineTo(x2, y2);
+    vizCtx.strokeStyle = `rgba(${Math.round(r)},${Math.round(g)},${Math.round(b)},${alpha})`;
+    vizCtx.lineWidth = Math.max(1.5, (Math.PI * 2 * innerRadius / barCount) * 0.6);
+    vizCtx.lineCap = 'round';
+    vizCtx.stroke();
+
+    // Glow effect for strong bars
+    if (val > 180) {
+      vizCtx.beginPath();
+      vizCtx.arc(x2, y2, 2, 0, Math.PI * 2);
+      vizCtx.fillStyle = `rgba(${Math.round(r)},${Math.round(g)},${Math.round(b)},0.8)`;
+      vizCtx.fill();
+    }
+  }
+
+  // Inner circle glow
+  vizCtx.beginPath();
+  vizCtx.arc(cx, cy, innerRadius - 2, 0, Math.PI * 2);
+  vizCtx.strokeStyle = `rgba(${rgb1.r},${rgb1.g},${rgb1.b},0.15)`;
+  vizCtx.lineWidth = 1;
+  vizCtx.stroke();
+}
+
+function drawBarSpectrum(freqData, colors, w, h) {
+  const barCount = 64;
+  const barWidth = w / barCount * 0.8;
+  const gap = w / barCount * 0.2;
+  const step = Math.floor(freqData.length / barCount);
+  const rgb1 = hexToRgb(colors.ac1);
+  const rgb2 = hexToRgb(colors.ac2);
+
+  for (let i = 0; i < barCount; i++) {
+    const val = freqData[i * step] || 0;
+    const barH = (val / 255) * h * 0.6 * state.sensitivity * 0.4;
+    const x = i * (barWidth + gap) + gap / 2;
+    const y = h / 2;
+
+    const t = i / barCount;
+    const r = rgb1.r + (rgb2.r - rgb1.r) * t;
+    const g = rgb1.g + (rgb2.g - rgb1.g) * t;
+    const b = rgb1.b + (rgb2.b - rgb1.b) * t;
+    const alpha = 0.5 + (val / 255) * 0.5;
+
+    // Draw mirrored bars
+    vizCtx.fillStyle = `rgba(${Math.round(r)},${Math.round(g)},${Math.round(b)},${alpha})`;
+    vizCtx.fillRect(x, y - barH, barWidth, barH);
+    vizCtx.fillStyle = `rgba(${Math.round(r)},${Math.round(g)},${Math.round(b)},${alpha * 0.5})`;
+    vizCtx.fillRect(x, y, barWidth, barH * 0.5);
+  }
+}
+
+function drawWaveform(timeData, colors, w, h) {
+  const rgb = hexToRgb(colors.ac1);
+  vizCtx.beginPath();
+  const sliceWidth = w / timeData.length;
+  let x = 0;
+
+  for (let i = 0; i < timeData.length; i++) {
+    const v = timeData[i] / 128.0;
+    const y = (v * h) / 2;
+    if (i === 0) vizCtx.moveTo(x, y);
+    else vizCtx.lineTo(x, y);
+    x += sliceWidth;
+  }
+
+  vizCtx.strokeStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},0.7)`;
+  vizCtx.lineWidth = 2;
+  vizCtx.stroke();
+
+  // Shadow wave
+  vizCtx.beginPath();
+  x = 0;
+  for (let i = 0; i < timeData.length; i++) {
+    const v = timeData[i] / 128.0;
+    const y = (v * h) / 2 + 4;
+    if (i === 0) vizCtx.moveTo(x, y);
+    else vizCtx.lineTo(x, y);
+    x += sliceWidth;
+  }
+  vizCtx.strokeStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},0.2)`;
+  vizCtx.lineWidth = 3;
+  vizCtx.stroke();
+}
+
+function drawDotSpectrum(cx, cy, freqData, colors, w, h) {
+  const count = 200;
+  const maxR = Math.min(w, h) * 0.4;
+  const step = Math.floor(freqData.length / count);
+  const rgb1 = hexToRgb(colors.ac1);
+  const rgb2 = hexToRgb(colors.ac2);
+
+  for (let i = 0; i < count; i++) {
+    const angle = (i / count) * Math.PI * 2;
+    const val = freqData[i * step] || 0;
+    const r = maxR * 0.3 + (val / 255) * maxR * 0.7 * state.sensitivity * 0.4;
+    const x = cx + Math.cos(angle) * r;
+    const y = cy + Math.sin(angle) * r;
+    const size = 1 + (val / 255) * 4;
+    const t = i / count;
+    const cr = rgb1.r + (rgb2.r - rgb1.r) * t;
+    const cg = rgb1.g + (rgb2.g - rgb1.g) * t;
+    const cb = rgb1.b + (rgb2.b - rgb1.b) * t;
+    const alpha = 0.3 + (val / 255) * 0.7;
+
+    vizCtx.beginPath();
+    vizCtx.arc(x, y, size, 0, Math.PI * 2);
+    vizCtx.fillStyle = `rgba(${Math.round(cr)},${Math.round(cg)},${Math.round(cb)},${alpha})`;
+    vizCtx.fill();
+  }
+}
+
+// ───────────────────────── IDLE ANIMATION (no audio) ─────────────────────────
+let idlePhase = 0;
+function renderIdleViz() {
+  if (analyser && state.isPlaying) return; // Real audio handles it
+
+  const w = vizCanvas.width / devicePixelRatio;
+  const h = vizCanvas.height / devicePixelRatio;
+  const cx = w / 2;
+  const cy = h / 2 - 10;
+  const colors = getThemeColors();
+  const rgb = hexToRgb(colors.ac1);
+
+  idlePhase += 0.02;
+
+  // Gentle breathing circle
+  const radius = Math.min(w, h) * 0.18;
+  const breathe = Math.sin(idlePhase) * 5;
+
+  vizCtx.beginPath();
+  vizCtx.arc(cx, cy, radius + breathe, 0, Math.PI * 2);
+  vizCtx.strokeStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},${0.1 + Math.sin(idlePhase) * 0.05})`;
+  vizCtx.lineWidth = 1;
+  vizCtx.stroke();
+
+  // Floating dots
+  for (let i = 0; i < 30; i++) {
+    const angle = (i / 30) * Math.PI * 2 + idlePhase * 0.5;
+    const r = radius + 20 + Math.sin(idlePhase + i) * 15;
+    const x = cx + Math.cos(angle) * r;
+    const y = cy + Math.sin(angle) * r;
+    const alpha = 0.1 + Math.sin(idlePhase + i * 0.3) * 0.1;
+
+    vizCtx.beginPath();
+    vizCtx.arc(x, y, 1.5, 0, Math.PI * 2);
+    vizCtx.fillStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},${alpha})`;
+    vizCtx.fill();
+  }
+}
+
+// ───────────────────────── UNIFIED RENDER LOOP ─────────────────────────
+function mainLoop() {
+  const w = vizCanvas.width / devicePixelRatio;
+  const h = vizCanvas.height / devicePixelRatio;
+  vizCtx.clearRect(0, 0, w, h);
+
+  if (analyser && state.isPlaying) {
+    // ─── Active audio rendering ───
+    const freqData = new Uint8Array(analyser.frequencyBinCount);
+    const timeData = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteFrequencyData(freqData);
+    analyser.getByteTimeDomainData(timeData);
+    let avgEnergy = 0;
+    for (let i = 0; i < freqData.length; i++) avgEnergy += freqData[i];
+    avgEnergy = (avgEnergy / freqData.length / 255) * state.sensitivity;
+
+    if (state.bgPulse && avgEnergy > 0.1) {
+      const colors = getThemeColors();
+      const rgb = hexToRgb(colors.glow);
+      const pulseAlpha = Math.min(0.08, avgEnergy * 0.04);
+      vizCtx.fillStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},${pulseAlpha})`;
+      vizCtx.fillRect(0, 0, w, h);
+    }
+
+    const cx = w / 2, cy = h / 2 - 10;
+    const colors = getThemeColors();
+
+    switch (state.vizStyle) {
+      case 'circular': drawCircularSpectrum(cx, cy, freqData, colors, w, h); break;
+      case 'bars': drawBarSpectrum(freqData, colors, w, h); break;
+      case 'wave': drawWaveform(timeData, colors, w, h); break;
+      case 'dots': drawDotSpectrum(cx, cy, freqData, colors, w, h); break;
+    }
+
+    updateEqBars(freqData);
+    renderParticles(avgEnergy);
+
+    // Sync emperor dance intensity
+    emperor.style.setProperty('--dance-intensity', Math.min(1, avgEnergy * 1.5));
+  } else {
+    // ─── Idle rendering (no audio) ───
+    renderIdleViz();
+    renderParticles(0.05);
+  }
+
+  requestAnimationFrame(mainLoop);
+}
+
+// ───────────────────────── INIT ─────────────────────────
+function init() {
+  // Loading screen
+  setTimeout(() => {
+    $('loadingScreen').classList.add('hidden');
+    $('app').classList.add('ready');
+
+    // Resize canvases
+    resizeCanvases();
+
+    // Start render loop
+    requestAnimationFrame(mainLoop);
+
+    // Set initial volume
+    audio.volume = state.volume;
+    volumeSlider.value = state.volume * 100;
+  }, 2200);
+}
+
+init();
+</script>
+</body>
+</html>

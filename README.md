@@ -6,7 +6,7 @@ Vibe Coding 项目合集 — 每个目录均由 **50 字以内的提示词** 一
 
 | 目录 | 项目名称 | 提示词 | 模型 | 技术栈 |
 |------|---------|--------|------|--------|
-| `wangzhen3691` | — | — | — | React + Vite |
+| `wangzhen3691` | LINUX.DO Clone | 角色为全栈专家，用 React 复刻 LINUX.DO。加入 CLI 交互模式，支持命令行导航论坛。代码追求极致轻量与高内聚，视觉风格硬核。 | Claude Opus | React + Tailwind + xterm.js |
 | `TechnologyStar` | 始皇顶级音乐播放器 | 见下方 | Claude Opus | 纯 HTML/CSS/JS |
 
 ### TechnologyStar 提示词

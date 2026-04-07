@@ -8,6 +8,7 @@ Vibe Coding 项目合集 — 每个目录均由 **50 字以内的提示词** 一
 |------|---------|--------|------|--------|
 | `wangzhen3691` | LINUX.DO Clone | 角色为全栈专家，用 React 复刻 LINUX.DO。加入 CLI 交互模式，支持命令行导航论坛。代码追求极致轻量与高内聚，视觉风格硬核。 | Claude Opus | React + Tailwind + xterm.js |
 | `TechnologyStar` | 始皇顶级音乐播放器 | 见下方 | Claude Opus | 纯 HTML/CSS/JS |
+| `Soul` | 中国体育赛事聚合系统 | 设计中国体育赛事聚合系统方案，聚焦中国队比赛，支持多源免费直播数据抓取与融合，提供订阅推送机制 | Claude Opus | Python + FastAPI + PostgreSQL + Redis |
 
 ### TechnologyStar 提示词
 

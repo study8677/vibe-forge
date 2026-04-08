@@ -1,0 +1,3 @@
+[workspace]
+members = ["crates/line-history-core", "crates/zed-lines-history-cli"]
+resolver = "2"

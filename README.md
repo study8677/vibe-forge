@@ -17,6 +17,7 @@ Vibe Coding 项目合集 — 每个目录均由 **50 字以内的提示词** 一
 | `wind1542` | Wind AI 编辑器 | obsidian插件，使用API修改文件，悬浮修改结果显示差异，支持额外一键拒绝/同意，自动时间戳备份可回滚 | Claude Opus 4.6 | TypeScript + Obsidian API + esbuild |
 | `Hiccup90` | Hiccup90 NAS Dashboard | 见下方 | gpt-5.4 | HTML + CSS + JavaScript ES Modules + localStorage + Node test |
 | `floorflour` | 游戏文本编辑器 | 游戏文本编辑器。文本的修正历史记录。项目化的存储读取。自定义格式，将文本映射或读取自具体程序文件 | Claude Opus 4.6 | Python + PySide6 + SQLite |
+| `zed-lines-history` | Zed Lines History | 见下方 | gpt-5.4 | Rust workspace + Cargo + Git CLI |
 
 ### TechnologyStar 提示词
 
@@ -38,6 +39,16 @@ Vibe Coding 项目合集 — 每个目录均由 **50 字以内的提示词** 一
 > 2、需要在前端页面直接修改设置，例如:sun-panel
 > 3、导航页要美观、现代化，例如 sun-pannel或者dashdot
 > 4、轻量化，高性能。
+
+### zed-lines-history 提示词
+
+> 做一个zed编辑器的插件
+>
+> 功能类似vscode里面的gitlens插件
+>
+> 主要有一个功能，就是 连续按行追踪代码能力
+>
+> 功能描述：有一个单独开启的lines history面板，我把鼠标聚焦在某一行代码，面板里展示当前和上一版的对比的记录，注意，在这个对比里我可以把鼠标就可以聚焦当前版，也可以继续聚焦在上一版的具体某一行，继续看上一版和上上一版的对比，以此类推，仍然可以聚焦上上版的代码，实现连续追踪
 
 ## 说明
 

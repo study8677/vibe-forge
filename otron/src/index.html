@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self';">
+  <title>OTron</title>
+  <link rel="stylesheet" href="../dist/xterm.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- ===== Sidebar ===== -->
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <h1>OTron</h1>
+        <div class="sidebar-actions">
+          <button id="btn-add" title="新建连接">+</button>
+          <button id="btn-import" title="导入连接">&#8615;</button>
+          <button id="btn-export" title="导出连接">&#8613;</button>
+        </div>
+      </div>
+      <div id="connection-list"></div>
+    </aside>
+
+    <!-- ===== Main Content ===== -->
+    <main id="main-content">
+      <!-- Empty state -->
+      <div id="empty-state">
+        <div class="empty-icon">&#9002;</div>
+        <h2>选择一个连接开始</h2>
+        <p>双击左侧连接或点击 <strong>+</strong> 创建新连接</p>
+      </div>
+
+      <!-- Session area (hidden until connected) -->
+      <div id="session-area">
+        <!-- Session tab bar -->
+        <div id="tab-bar"></div>
+
+        <!-- Sub-tabs: Terminal / Files -->
+        <div class="sub-tabs">
+          <button class="sub-tab active" data-view="terminal">终端</button>
+          <button class="sub-tab" data-view="files">文件管理</button>
+        </div>
+
+        <!-- Content -->
+        <div id="session-content">
+          <!-- Terminal -->
+          <div id="terminal-view">
+            <div id="terminal-container"></div>
+          </div>
+
+          <!-- File Manager -->
+          <div id="file-view">
+            <div class="path-bar">
+              <button id="btn-parent" title="上级目录">&#8593;</button>
+              <input id="current-path" type="text" value="/" spellcheck="false">
+              <button id="btn-go">前往</button>
+              <button id="btn-refresh">刷新</button>
+              <div class="path-spacer"></div>
+              <button id="btn-upload" class="accent">上传</button>
+              <button id="btn-mkdir">新建文件夹</button>
+            </div>
+            <div class="file-table-wrapper">
+              <table id="file-table">
+                <thead>
+                  <tr>
+                    <th>名称</th>
+                    <th style="width:100px">大小</th>
+                    <th style="width:160px">修改时间</th>
+                    <th style="width:70px">权限</th>
+                    <th style="width:90px">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="file-table-body">
+                  <tr><td colspan="5" class="empty-cell">连接后浏览远程文件</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="transfer-status">
+              <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+              <span class="progress-text" id="progress-text"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast notifications -->
+  <div id="toast-container"></div>
+
+  <script src="../dist/renderer.js"></script>
+</body>
+</html>

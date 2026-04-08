@@ -1,0 +1,12 @@
+name: "C# String Constants"
+description: "C# files with string constants like: public const string KEY = \"value\";"
+extensions: [".cs"]
+encoding: "utf-8"
+type: "regex"
+regex:
+  patterns:
+    - pattern: '(?:public|private|internal|protected)\s+(?:static\s+)?(?:readonly\s+)?(?:const\s+)?string\s+(\w+)\s*=\s*"([^"]*)"\s*;'
+      key_group: 1
+      value_group: 2
+      context_lines: 1
+  replacement: ""

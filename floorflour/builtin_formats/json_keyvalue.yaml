@@ -1,0 +1,9 @@
+name: "JSON Key-Value"
+description: "Simple JSON object where keys are text IDs and values are text strings"
+extensions: [".json"]
+encoding: "utf-8"
+type: "structured"
+structured:
+  format: "json"
+  entries_path: "$"
+  entry_mode: "key_value"

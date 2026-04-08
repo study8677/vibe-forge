@@ -1,0 +1,10 @@
+name: "CSV Standard"
+description: "CSV file with key in first column and text in second column"
+extensions: [".csv", ".tsv"]
+encoding: "utf-8"
+type: "structured"
+structured:
+  format: "csv"
+  csv_delimiter: ","
+  csv_key_col: 0
+  csv_value_col: 1

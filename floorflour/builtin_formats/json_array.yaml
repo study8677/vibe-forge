@@ -1,0 +1,13 @@
+name: "JSON Array of Objects"
+description: "JSON array where each object has an id field and a text field"
+extensions: [".json"]
+encoding: "utf-8"
+type: "structured"
+structured:
+  format: "json"
+  entries_path: "$"
+  entry_mode: "array_of_objects"
+  key_field: "id"
+  value_field: "text"
+  context_field: "context"
+  speaker_field: "speaker"

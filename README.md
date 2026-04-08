@@ -13,6 +13,8 @@ Vibe Coding 项目合集 — 每个目录均由 **50 字以内的提示词** 一
 | `Sora` | Sora 笔记 | 基于Next.js构建个人笔记全栈应用，要求支持markdown渲染，支持用任务看板管理笔记。风格要求与notion一致。 | Claude Opus 4.6 | Next.js 14 + React 18 + Tailwind CSS + Prisma + SQLite |
 | `不为人知的鹅妈妈童谣` | GPU 视频 AI 流水线工具 | 构建一个视频字幕擦除，TTS生成合并到视频，语音自动对口型，ai换脸的工具，接入GPU | gpt-5.4 | Python + ffmpeg + TOML + unittest |
 | `mjjs` | MJJS AI 代码助手 | 写一个vscode插件，能右键解释代码，能补全的，接入自定义大模型 | Claude Opus 4.6 | TypeScript + VS Code Extension API + OpenAI Compatible API |
+| `再靠近一点就要融化` | Research Agent | 见下方 | gpt-5.4 | Python 3.14 + OpenAI Responses API + arXiv API + unittest + ruff |
+| `wind1542` | Wind AI 编辑器 | obsidian插件，使用API修改文件，悬浮修改结果显示差异，支持额外一键拒绝/同意，自动时间戳备份可回滚 | Claude Opus 4.6 | TypeScript + Obsidian API + esbuild |
 
 ### TechnologyStar 提示词
 
@@ -22,6 +24,10 @@ Vibe Coding 项目合集 — 每个目录均由 **50 字以内的提示词** 一
 > 3. 多种功能支持
 >
 > 名称：始皇顶级音乐播放器（neo music helper）
+
+### 再靠近一点就要融化 提示词
+
+> 生成一个科研 Agent：输入研究目标，arxiv检索、论文排序阅读、想法生成、代码生成与执行（反馈循环至无bug）、结果评估并反馈，多次循环。
 
 ## 说明
 

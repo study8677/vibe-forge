@@ -1,0 +1,9 @@
+{
+	"id": "wind1542-ai-editor",
+	"name": "Wind AI Editor",
+	"version": "1.0.0",
+	"minAppVersion": "1.0.0",
+	"description": "AI-powered file modification with floating diff preview, one-click accept/reject, and automatic timestamp backup with rollback",
+	"author": "wind1542",
+	"isDesktopOnly": false
+}

@@ -1,0 +1,442 @@
+/* ============================================================
+   Wind AI Editor — Styles
+   ============================================================ */
+
+/* ---- Diff Modal ---- */
+
+.wind-diff-modal .modal-content {
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	max-height: 80vh;
+}
+
+.wind-diff-modal {
+	width: 90vw;
+	max-width: 900px;
+	animation: wind-fade-in 0.15s ease-out;
+}
+
+@keyframes wind-fade-in {
+	from {
+		opacity: 0;
+		transform: translateY(-8px) scale(0.98);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+/* Header */
+.wind-diff-header {
+	padding: 16px 20px 12px;
+	border-bottom: 1px solid var(--background-modifier-border);
+	flex-shrink: 0;
+}
+
+.wind-diff-title-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.wind-diff-filename {
+	font-weight: 600;
+	font-size: 1.05em;
+	color: var(--text-normal);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.wind-diff-stats {
+	display: flex;
+	gap: 8px;
+	font-size: 0.85em;
+	font-weight: 600;
+	font-family: var(--font-monospace);
+	flex-shrink: 0;
+}
+
+.wind-diff-stat-add {
+	color: #2ea043;
+	background: rgba(46, 160, 67, 0.1);
+	padding: 2px 8px;
+	border-radius: 4px;
+}
+
+.wind-diff-stat-del {
+	color: #f85149;
+	background: rgba(248, 81, 73, 0.1);
+	padding: 2px 8px;
+	border-radius: 4px;
+}
+
+.wind-diff-stat-none {
+	color: var(--text-muted);
+}
+
+.wind-diff-instruction {
+	margin-top: 8px;
+	font-size: 0.85em;
+	color: var(--text-muted);
+	font-style: italic;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* Diff content area */
+.wind-diff-container {
+	overflow: auto;
+	flex: 1;
+	min-height: 100px;
+	max-height: 60vh;
+}
+
+.wind-diff-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-family: var(--font-monospace);
+	font-size: 0.85em;
+	line-height: 1.5;
+}
+
+.wind-diff-table td {
+	padding: 0;
+	vertical-align: top;
+}
+
+/* Line numbers */
+.wind-diff-linenum {
+	width: 50px;
+	min-width: 50px;
+	text-align: right;
+	padding: 1px 8px 1px 4px !important;
+	color: var(--text-faint);
+	user-select: none;
+	border-right: 1px solid var(--background-modifier-border);
+	font-size: 0.9em;
+}
+
+.wind-diff-linenum-old {
+	background: var(--background-secondary);
+}
+
+.wind-diff-linenum-new {
+	background: var(--background-secondary);
+}
+
+/* Gutter (+/-/space) */
+.wind-diff-gutter {
+	width: 20px;
+	min-width: 20px;
+	text-align: center;
+	padding: 1px 0 !important;
+	user-select: none;
+	font-weight: 700;
+}
+
+.wind-diff-line-add .wind-diff-gutter {
+	color: #2ea043;
+}
+
+.wind-diff-line-remove .wind-diff-gutter {
+	color: #f85149;
+}
+
+/* Content */
+.wind-diff-content {
+	padding: 1px 12px !important;
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+/* Line type backgrounds */
+.wind-diff-line-add {
+	background-color: rgba(46, 160, 67, 0.08);
+}
+
+.wind-diff-line-remove {
+	background-color: rgba(248, 81, 73, 0.08);
+}
+
+.wind-diff-line-unchanged {
+	background-color: transparent;
+}
+
+.wind-diff-line-add .wind-diff-linenum {
+	background-color: rgba(46, 160, 67, 0.12);
+}
+
+.wind-diff-line-remove .wind-diff-linenum {
+	background-color: rgba(248, 81, 73, 0.12);
+}
+
+/* Character-level diff highlights */
+.wind-diff-char-add {
+	background-color: rgba(46, 160, 67, 0.3);
+	border-radius: 2px;
+	padding: 0 1px;
+}
+
+.wind-diff-char-remove {
+	background-color: rgba(248, 81, 73, 0.3);
+	text-decoration: line-through;
+	border-radius: 2px;
+	padding: 0 1px;
+}
+
+/* Footer */
+.wind-diff-footer {
+	padding: 12px 20px 16px;
+	border-top: 1px solid var(--background-modifier-border);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-shrink: 0;
+}
+
+.wind-diff-hint {
+	font-size: 0.8em;
+	color: var(--text-faint);
+}
+
+.wind-diff-buttons {
+	display: flex;
+	gap: 10px;
+}
+
+.wind-diff-btn {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 8px 20px;
+	border-radius: 6px;
+	font-size: 0.95em;
+	font-weight: 600;
+	cursor: pointer;
+	border: 1px solid transparent;
+	transition: all 0.15s ease;
+}
+
+.wind-diff-btn-icon {
+	font-size: 1.1em;
+}
+
+.wind-diff-btn-reject {
+	background: var(--background-secondary);
+	color: var(--text-normal);
+	border-color: var(--background-modifier-border);
+}
+
+.wind-diff-btn-reject:hover {
+	background: rgba(248, 81, 73, 0.1);
+	border-color: #f85149;
+	color: #f85149;
+}
+
+.wind-diff-btn-accept {
+	background: #2ea043;
+	color: #fff;
+	border-color: #2ea043;
+}
+
+.wind-diff-btn-accept:hover {
+	background: #278a38;
+	border-color: #278a38;
+}
+
+.wind-diff-btn-accept:focus {
+	box-shadow: 0 0 0 3px rgba(46, 160, 67, 0.3);
+	outline: none;
+}
+
+/* ---- Instruction Modal ---- */
+
+.wind-instruction-modal {
+	width: 600px;
+	max-width: 90vw;
+}
+
+.wind-instruction-title {
+	margin: 0 0 4px;
+	font-size: 1.1em;
+}
+
+.wind-instruction-desc {
+	margin: 0 0 12px;
+	color: var(--text-muted);
+	font-size: 0.9em;
+}
+
+.wind-instruction-input {
+	width: 100%;
+	min-height: 100px;
+	padding: 10px 12px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	background: var(--background-primary);
+	color: var(--text-normal);
+	font-size: 0.95em;
+	resize: vertical;
+	font-family: inherit;
+}
+
+.wind-instruction-input:focus {
+	border-color: var(--interactive-accent);
+	box-shadow: 0 0 0 2px rgba(var(--interactive-accent-rgb), 0.2);
+	outline: none;
+}
+
+.wind-instruction-input::placeholder {
+	color: var(--text-faint);
+}
+
+.wind-instruction-footer {
+	margin-top: 14px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.wind-instruction-hint {
+	font-size: 0.8em;
+	color: var(--text-faint);
+}
+
+.wind-instruction-buttons {
+	display: flex;
+	gap: 8px;
+}
+
+.wind-instruction-btn-cancel {
+	padding: 6px 16px;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.wind-instruction-btn-submit {
+	padding: 6px 20px;
+	border-radius: 6px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+/* ---- Rollback Modal ---- */
+
+.wind-rollback-modal {
+	width: 700px;
+	max-width: 90vw;
+}
+
+.wind-rollback-title {
+	margin: 0 0 16px;
+	font-size: 1.1em;
+}
+
+.wind-rollback-list {
+	max-height: 60vh;
+	overflow-y: auto;
+}
+
+.wind-rollback-empty {
+	text-align: center;
+	padding: 32px 16px;
+	color: var(--text-muted);
+	font-size: 0.95em;
+}
+
+.wind-rollback-entry {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 16px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	margin-bottom: 8px;
+	transition: background 0.1s ease;
+}
+
+.wind-rollback-entry:hover {
+	background: var(--background-secondary);
+}
+
+.wind-rollback-info {
+	flex: 1;
+	min-width: 0;
+}
+
+.wind-rollback-date {
+	font-weight: 600;
+	font-size: 0.95em;
+	color: var(--text-normal);
+}
+
+.wind-rollback-instruction {
+	font-size: 0.85em;
+	color: var(--text-muted);
+	margin-top: 2px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.wind-rollback-size {
+	font-size: 0.8em;
+	color: var(--text-faint);
+	margin-top: 2px;
+	font-family: var(--font-monospace);
+}
+
+.wind-rollback-actions {
+	display: flex;
+	gap: 6px;
+	margin-left: 12px;
+	flex-shrink: 0;
+}
+
+.wind-rollback-btn {
+	padding: 4px 12px;
+	border-radius: 4px;
+	font-size: 0.85em;
+	cursor: pointer;
+	border: 1px solid var(--background-modifier-border);
+	background: var(--background-primary);
+	color: var(--text-normal);
+	transition: all 0.1s ease;
+}
+
+.wind-rollback-btn:hover {
+	background: var(--background-secondary-alt);
+}
+
+.wind-rollback-btn-preview {
+	color: var(--interactive-accent);
+	border-color: var(--interactive-accent);
+}
+
+.wind-rollback-btn-preview:hover {
+	background: rgba(var(--interactive-accent-rgb), 0.1);
+}
+
+.wind-rollback-btn-restore {
+	color: #2ea043;
+	border-color: #2ea043;
+}
+
+.wind-rollback-btn-restore:hover {
+	background: rgba(46, 160, 67, 0.1);
+}
+
+.wind-rollback-btn-delete {
+	color: #f85149;
+	border-color: transparent;
+}
+
+.wind-rollback-btn-delete:hover {
+	background: rgba(248, 81, 73, 0.1);
+	border-color: #f85149;
+}

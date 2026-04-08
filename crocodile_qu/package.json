@@ -1,0 +1,38 @@
+{
+  "name": "crocodile-qu",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "db:up": "docker compose up -d mysql",
+    "db:down": "docker compose down",
+    "db:wait": "node scripts/wait-for-mysql.mjs",
+    "db:push": "prisma db push",
+    "db:generate": "prisma generate",
+    "db:setup": "pnpm db:up && pnpm db:wait && pnpm db:push",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@auth/prisma-adapter": "^2.10.0",
+    "@prisma/client": "^6.19.0",
+    "next": "16.2.2",
+    "next-auth": "^5.0.0-beta.30",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.53.0",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.2",
+    "prisma": "^6.19.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

@@ -19,6 +19,7 @@ Vibe Coding 项目合集 — 每个目录均由 **50 字以内的提示词** 一
 | `floorflour` | 游戏文本编辑器 | 游戏文本编辑器。文本的修正历史记录。项目化的存储读取。自定义格式，将文本映射或读取自具体程序文件 | Claude Opus 4.6 | Python + PySide6 + SQLite |
 | `zed-lines-history` | Zed Lines History | 见下方 | gpt-5.4 | Rust workspace + Cargo + Git CLI |
 | `yeqi-night-companion` | 夜气 | 做会读空气的深夜陪伴App：克制暧昧，识别情绪，主动陪伴，生成高保真交互原型。 | gpt-5.4 | Vanilla HTML/CSS/JavaScript + Node test |
+| `crocodile_qu` | Crocodile OAuth Hub | 见下方 | gpt-5.4 | Next.js 16 + Auth.js + Prisma + MySQL + Playwright |
 
 ### TechnologyStar 提示词
 
@@ -50,6 +51,10 @@ Vibe Coding 项目合集 — 每个目录均由 **50 字以内的提示词** 一
 > 主要有一个功能，就是 连续按行追踪代码能力
 >
 > 功能描述：有一个单独开启的lines history面板，我把鼠标聚焦在某一行代码，面板里展示当前和上一版的对比的记录，注意，在这个对比里我可以把鼠标就可以聚焦当前版，也可以继续聚焦在上一版的具体某一行，继续看上一版和上上一版的对比，以此类推，仍然可以聚焦上上版的代码，实现连续追踪
+
+### crocodile_qu 提示词
+
+> 做第三方登录集成，包括腾讯阿里字节github outlook微博微信qq等，有E2E测试，使用mysql
 
 ## 说明
 

@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "research-agent"
+version = "0.1.0"
+description = "A local-first research agent for arXiv retrieval, ideation, code generation, and evaluation."
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [
+  { name = "Codex" }
+]
+
+[project.scripts]
+research-agent = "research_agent.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]

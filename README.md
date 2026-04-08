@@ -15,6 +15,7 @@ Vibe Coding 项目合集 — 每个目录均由 **50 字以内的提示词** 一
 | `mjjs` | MJJS AI 代码助手 | 写一个vscode插件，能右键解释代码，能补全的，接入自定义大模型 | Claude Opus 4.6 | TypeScript + VS Code Extension API + OpenAI Compatible API |
 | `再靠近一点就要融化` | Research Agent | 见下方 | gpt-5.4 | Python 3.14 + OpenAI Responses API + arXiv API + unittest + ruff |
 | `wind1542` | Wind AI 编辑器 | obsidian插件，使用API修改文件，悬浮修改结果显示差异，支持额外一键拒绝/同意，自动时间戳备份可回滚 | Claude Opus 4.6 | TypeScript + Obsidian API + esbuild |
+| `Hiccup90` | Hiccup90 NAS Dashboard | 见下方 | gpt-5.4 | HTML + CSS + JavaScript ES Modules + localStorage + Node test |
 
 ### TechnologyStar 提示词
 
@@ -28,6 +29,14 @@ Vibe Coding 项目合集 — 每个目录均由 **50 字以内的提示词** 一
 ### 再靠近一点就要融化 提示词
 
 > 生成一个科研 Agent：输入研究目标，arxiv检索、论文排序阅读、想法生成、代码生成与执行（反馈循环至无bug）、结果评估并反馈，多次循环。
+
+### Hiccup90 提示词
+
+> 做一个适合NAS的导航页
+> 1、功能性和自由度要媲美gethomepage/homepage
+> 2、需要在前端页面直接修改设置，例如:sun-panel
+> 3、导航页要美观、现代化，例如 sun-pannel或者dashdot
+> 4、轻量化，高性能。
 
 ## 说明
 

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>Hiccup90</title>
+    <meta
+      name="description"
+      content="A lightweight, editable NAS dashboard for self-hosted services."
+    />
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body data-theme="graphite" data-background="aurora" data-density="comfortable">
+    <div class="page-background" aria-hidden="true"></div>
+    <div class="app-shell">
+      <aside class="left-rail">
+        <div class="brand-block">
+          <p class="brand-kicker">NAS navigation</p>
+          <h1 id="brandTitle">Hiccup90</h1>
+          <p id="brandSubtitle">NAS command center</p>
+        </div>
+
+        <form id="searchForm" class="search-panel">
+          <label class="search-label" for="searchInput">Search services</label>
+          <div class="search-field">
+            <input
+              id="searchInput"
+              name="search"
+              type="search"
+              autocomplete="off"
+              placeholder="Search Jellyfin, Immich, backup..."
+            />
+            <button type="submit">Go</button>
+          </div>
+          <p class="search-hint">Press <kbd>/</kbd> to focus, <kbd>E</kbd> to toggle edit mode.</p>
+        </form>
+
+        <div class="rail-actions">
+          <button id="editModeButton" class="secondary-button" type="button" data-action="toggle-edit">
+            Enable edit mode
+          </button>
+          <button class="primary-button" type="button" data-action="toggle-settings">
+            Open settings
+          </button>
+        </div>
+
+        <div class="rail-note">
+          <p>Zero dependency, front-end editable, exportable configuration.</p>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="workspace-topbar">
+          <div>
+            <p class="topbar-label">Self-hosted workspace</p>
+            <h2 class="topbar-title">Dashboard</h2>
+          </div>
+          <div class="topbar-actions">
+            <button class="ghost-button" type="button" data-action="add-item">New service</button>
+            <button class="ghost-button" type="button" data-action="add-group">New group</button>
+            <button class="ghost-button" type="button" data-action="toggle-settings">Settings</button>
+          </div>
+        </header>
+
+        <section id="heroSection" class="hero-section" aria-live="polite"></section>
+        <section id="groupsSection" class="groups-section" aria-live="polite"></section>
+      </main>
+
+      <aside id="settingsDrawer" class="settings-drawer" aria-label="Settings drawer">
+        <div class="settings-header">
+          <div>
+            <p class="topbar-label">Live configuration</p>
+            <h2 class="topbar-title">Settings</h2>
+          </div>
+          <button class="icon-button" type="button" data-action="toggle-settings" aria-label="Close settings">
+            ×
+          </button>
+        </div>
+        <div id="settingsContent" class="settings-content"></div>
+      </aside>
+    </div>
+
+    <dialog id="editorDialog" class="editor-dialog"></dialog>
+    <div id="toastStack" class="toast-stack" aria-live="polite" aria-atomic="true"></div>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>

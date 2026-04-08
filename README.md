@@ -18,6 +18,7 @@ Vibe Coding 项目合集 — 每个目录均由 **50 字以内的提示词** 一
 | `Hiccup90` | Hiccup90 NAS Dashboard | 见下方 | gpt-5.4 | HTML + CSS + JavaScript ES Modules + localStorage + Node test |
 | `floorflour` | 游戏文本编辑器 | 游戏文本编辑器。文本的修正历史记录。项目化的存储读取。自定义格式，将文本映射或读取自具体程序文件 | Claude Opus 4.6 | Python + PySide6 + SQLite |
 | `zed-lines-history` | Zed Lines History | 见下方 | gpt-5.4 | Rust workspace + Cargo + Git CLI |
+| `yeqi-night-companion` | 夜气 | 做会读空气的深夜陪伴App：克制暧昧，识别情绪，主动陪伴，生成高保真交互原型。 | gpt-5.4 | Vanilla HTML/CSS/JavaScript + Node test |
 
 ### TechnologyStar 提示词
 

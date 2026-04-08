@@ -21,6 +21,7 @@ Vibe Coding 项目合集 — 每个目录均由 **50 字以内的提示词** 一
 | `yeqi-night-companion` | 夜气 | 做会读空气的深夜陪伴App：克制暧昧，识别情绪，主动陪伴，生成高保真交互原型。 | gpt-5.4 | Vanilla HTML/CSS/JavaScript + Node test |
 | `crocodile_qu` | Crocodile OAuth Hub | 见下方 | gpt-5.4 | Next.js 16 + Auth.js + Prisma + MySQL + Playwright |
 | `wakusei` | 惑星 AI 终端 | 用 Next.js 搭个粗野主义 AI 聊天页面，TypeScript 全栈。左边填 API 地址和 Key，存 localStorage。主区域聊天，走后端代理流式输出。历史对话存 IndexedDB，能点开回看。样式要硬边框、纯直角、黑黄白配色。 | Claude Opus 4.6 | Next.js / TypeScript / Tailwind CSS / IndexedDB |
+| `zwy0724` | 日升日落时间卡片 | 完成一个前端项目，语言不限，内容设计时间卡片翻转效果，背面同步现实时间展示太阳轨迹，实现日升日落与动态昼夜光影。 | Claude Opus 4.6 | HTML / CSS 3D / Canvas |
 
 ### TechnologyStar 提示词
 

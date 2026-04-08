@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日升日落 · 时间卡片</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: -apple-system, 'Segoe UI', 'PingFang SC', sans-serif;
+      background: #0f0e17;
+      overflow: hidden;
+      transition: background 3s ease;
+    }
+
+    /* ===== Background Particles ===== */
+    .particle {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      background: rgba(255,255,255,0.06);
+      animation: drift linear infinite;
+    }
+    @keyframes drift {
+      0%   { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      8%   { opacity: 0.7; }
+      92%  { opacity: 0.7; }
+      100% { transform: translateY(-15vh) rotate(540deg); opacity: 0; }
+    }
+
+    /* ===== Card Scene ===== */
+    .scene {
+      perspective: 1100px;
+      width: 400px;
+      height: 560px;
+    }
+    .card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(.4,.0,.2,1);
+      cursor: pointer;
+    }
+    .card.flipped { transform: rotateY(180deg); }
+    .face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    /* ===== Front Face ===== */
+    .front {
+      background: linear-gradient(145deg, #1a1633 0%, #2d2b55 50%, #1a1633 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .front::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.03) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .front::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.06);
+      pointer-events: none;
+    }
+    .label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      letter-spacing: 6px;
+      margin-bottom: 30px;
+    }
+
+    /* ===== Split-Flap Clock ===== */
+    .clock-row {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      margin-bottom: 30px;
+    }
+    .clock-group { display: flex; gap: 5px; }
+
+    .split-digit {
+      width: 56px;
+      height: 82px;
+      position: relative;
+      perspective: 250px;
+    }
+    .sd-upper, .sd-lower {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      overflow: hidden;
+    }
+    .sd-upper {
+      top: 0;
+      background: rgba(255,255,255,0.06);
+      border-radius: 8px 8px 2px 2px;
+      border-bottom: 1px solid rgba(0,0,0,0.5);
+    }
+    .sd-lower {
+      bottom: 0;
+      background: rgba(255,255,255,0.04);
+      border-radius: 2px 2px 8px 8px;
+    }
+    .sd-inner {
+      position: absolute;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'SF Mono','Fira Code','Cascadia Code','Consolas', monospace;
+      font-size: 52px;
+      font-weight: 700;
+      color: #fff;
+      user-select: none;
+      line-height: 1;
+    }
+    .sd-upper .sd-inner { top: 0; height: 200%; }
+    .sd-lower .sd-inner { bottom: 0; height: 200%; }
+
+    /* Flap elements (dynamic) */
+    .flap {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      overflow: hidden;
+      z-index: 3;
+      will-change: transform;
+    }
+    .flap-inner {
+      position: absolute;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'SF Mono','Fira Code','Cascadia Code','Consolas', monospace;
+      font-size: 52px;
+      font-weight: 700;
+      color: #fff;
+      user-select: none;
+      line-height: 1;
+    }
+    .flap-up {
+      top: 0;
+      background: rgba(255,255,255,0.06);
+      border-radius: 8px 8px 2px 2px;
+      transform-origin: bottom center;
+      transition: transform 0.28s ease-in;
+      backface-visibility: hidden;
+    }
+    .flap-up .flap-inner { top: 0; height: 200%; }
+    .flap-up::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(transparent 40%, rgba(0,0,0,0.2));
+      pointer-events: none;
+    }
+    .flap-down {
+      bottom: 0;
+      background: rgba(255,255,255,0.04);
+      border-radius: 2px 2px 8px 8px;
+      transform-origin: top center;
+      transform: rotateX(90deg);
+      transition: transform 0.28s ease-out;
+      backface-visibility: hidden;
+    }
+    .flap-down .flap-inner { bottom: 0; height: 200%; }
+    .flap-down::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgba(0,0,0,0.18), transparent 50%);
+      pointer-events: none;
+    }
+
+    .colon {
+      font-size: 40px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.35);
+      line-height: 82px;
+      margin: 0 3px;
+      animation: pulse 1s step-end infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.15; }
+    }
+
+    .date-text {
+      font-size: 15px;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 3px;
+      margin-bottom: 8px;
+    }
+    .weekday-text {
+      font-size: 12px;
+      color: rgba(255,255,255,0.22);
+      letter-spacing: 5px;
+    }
+    .front-hint {
+      position: absolute;
+      bottom: 22px;
+      font-size: 10px;
+      color: rgba(255,255,255,0.13);
+      letter-spacing: 2px;
+    }
+
+    /* ===== Back Face ===== */
+    .back {
+      transform: rotateY(180deg);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .back canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+    }
+    .back-time {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'SF Mono','Fira Code', monospace;
+      font-size: 26px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.88);
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      z-index: 5;
+      letter-spacing: 3px;
+    }
+    .back-date {
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+      z-index: 5;
+      letter-spacing: 2px;
+      white-space: nowrap;
+    }
+    .sun-info {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 30px;
+      z-index: 5;
+    }
+    .sun-info span {
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+      text-shadow: 0 1px 5px rgba(0,0,0,0.5);
+      letter-spacing: 1px;
+    }
+    .back-hint {
+      position: absolute;
+      bottom: 44px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      color: rgba(255,255,255,0.18);
+      z-index: 5;
+      letter-spacing: 2px;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 440px) {
+      .scene { width: 92vw; height: calc(92vw * 1.4); }
+      .split-digit { width: 44px; height: 66px; }
+      .sd-inner, .flap-inner { font-size: 42px !important; }
+      .colon { font-size: 32px; line-height: 66px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background particles injected by JS -->
+
+  <div class="scene">
+    <div class="card" id="card">
+      <!-- Front: Split-Flap Clock -->
+      <div class="face front">
+        <div class="label">当 前 时 间</div>
+        <div class="clock-row" id="clock"></div>
+        <div class="date-text" id="dateText"></div>
+        <div class="weekday-text" id="weekdayText"></div>
+        <div class="front-hint">点击翻转 · 查看太阳轨迹</div>
+      </div>
+
+      <!-- Back: Sun Trajectory Canvas -->
+      <div class="face back">
+        <canvas id="cv"></canvas>
+        <div class="back-time" id="backTime"></div>
+        <div class="back-date" id="backDate"></div>
+        <div class="sun-info">
+          <span id="srLabel">06:00</span>
+          <span id="ssLabel">18:00</span>
+        </div>
+        <div class="back-hint">点击翻回</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  /* ============================================================
+     Constants & Config
+     ============================================================ */
+  const LAT = 31.2;                               // Approx. Shanghai latitude
+  const WEEKDAYS = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+
+  /* ============================================================
+     Sunrise / Sunset approximate calculation
+     ============================================================ */
+  function calcSunTimes(date) {
+    const start = new Date(date.getFullYear(), 0, 0);
+    const dayOfYear = Math.floor((date - start) / 86400000);
+    const B = (2 * Math.PI / 365) * (dayOfYear - 81);
+    const decl = 23.45 * Math.sin(B) * Math.PI / 180;
+    const latRad = LAT * Math.PI / 180;
+    let cosHA = -Math.tan(latRad) * Math.tan(decl);
+    cosHA = Math.max(-1, Math.min(1, cosHA));
+    const HA = Math.acos(cosHA) * 180 / Math.PI;
+    return { sunrise: 12 - HA / 15, sunset: 12 + HA / 15 };
+  }
+
+  function fmtHour(h) {
+    const hh = Math.floor(h);
+    const mm = Math.round((h - hh) * 60);
+    return String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
+  }
+
+  /* ============================================================
+     Card Flip
+     ============================================================ */
+  document.getElementById('card').addEventListener('click', function () {
+    this.classList.toggle('flipped');
+  });
+
+  /* ============================================================
+     Background Particles
+     ============================================================ */
+  (function () {
+    for (let i = 0; i < 18; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const sz = 1 + Math.random() * 3;
+      p.style.cssText =
+        `width:${sz}px;height:${sz}px;left:${Math.random()*100}vw;` +
+        `animation-duration:${14+Math.random()*20}s;animation-delay:${Math.random()*14}s`;
+      document.body.appendChild(p);
+    }
+  })();
+
+  /* ============================================================
+     Split-Flap Clock
+     ============================================================ */
+  const clockEl = document.getElementById('clock');
+  const digitEls = [];
+  let prevTimeStr = '';
+
+  // Build DOM
+  (function buildClock() {
+    const layout = ['d','d','c','d','d','c','d','d'];
+    let group = document.createElement('div');
+    group.className = 'clock-group';
+
+    layout.forEach(type => {
+      if (type === 'c') {
+        clockEl.appendChild(group);
+        const c = document.createElement('div');
+        c.className = 'colon';
+        c.textContent = ':';
+        clockEl.appendChild(c);
+        group = document.createElement('div');
+        group.className = 'clock-group';
+      } else {
+        const d = document.createElement('div');
+        d.className = 'split-digit';
+        d.innerHTML =
+          '<div class="sd-upper"><div class="sd-inner">0</div></div>' +
+          '<div class="sd-lower"><div class="sd-inner">0</div></div>';
+        group.appendChild(d);
+        digitEls.push(d);
+      }
+    });
+    clockEl.appendChild(group);
+  })();
+
+  function flipDigit(el, newVal) {
+    const upperTxt = el.querySelector('.sd-upper .sd-inner');
+    const lowerTxt = el.querySelector('.sd-lower .sd-inner');
+    const oldVal = upperTxt.textContent;
+    if (oldVal === newVal) return;
+
+    // Remove any in-progress flaps
+    el.querySelectorAll('.flap').forEach(f => f.remove());
+
+    // Phase 1: upper flap (old value) folds down
+    const flapUp = document.createElement('div');
+    flapUp.className = 'flap flap-up';
+    flapUp.innerHTML = '<div class="flap-inner">' + oldVal + '</div>';
+    el.appendChild(flapUp);
+
+    // Reveal new value behind the flap
+    upperTxt.textContent = newVal;
+
+    requestAnimationFrame(() => {
+      flapUp.style.transform = 'rotateX(-90deg)';
+    });
+
+    // Phase 2: lower flap (new value) settles into place
+    setTimeout(() => {
+      const flapDn = document.createElement('div');
+      flapDn.className = 'flap flap-down';
+      flapDn.innerHTML = '<div class="flap-inner">' + newVal + '</div>';
+      el.appendChild(flapDn);
+
+      requestAnimationFrame(() => {
+        flapDn.style.transform = 'rotateX(0deg)';
+      });
+
+      // Cleanup
+      setTimeout(() => {
+        lowerTxt.textContent = newVal;
+        flapUp.remove();
+        flapDn.remove();
+      }, 300);
+    }, 280);
+  }
+
+  // Initialize with current time
+  (function initClock() {
+    const n = new Date();
+    const t = [n.getHours(), n.getMinutes(), n.getSeconds()]
+      .map(v => String(v).padStart(2, '0')).join('');
+    for (let i = 0; i < 6; i++) {
+      digitEls[i].querySelector('.sd-upper .sd-inner').textContent = t[i];
+      digitEls[i].querySelector('.sd-lower .sd-inner').textContent = t[i];
+    }
+    prevTimeStr = t;
+  })();
+
+  /* ============================================================
+     Canvas Setup
+     ============================================================ */
+  const canvas = document.getElementById('cv');
+  const ctx = canvas.getContext('2d');
+  let cvW = 0, cvH = 0;
+
+  function sizeCanvas() {
+    const r = canvas.parentElement.getBoundingClientRect();
+    const dpr = devicePixelRatio || 1;
+    const nw = Math.round(r.width * dpr);
+    const nh = Math.round(r.height * dpr);
+    if (canvas.width !== nw || canvas.height !== nh) {
+      canvas.width = nw;
+      canvas.height = nh;
+    }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cvW = r.width;
+    cvH = r.height;
+  }
+
+  /* ============================================================
+     Helpers
+     ============================================================ */
+  function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+  function lerp(a, b, t) { return a + (b - a) * clamp01(t); }
+  function lerpC(a, b, t) {
+    t = clamp01(t);
+    return [
+      Math.round(a[0] + (b[0] - a[0]) * t),
+      Math.round(a[1] + (b[1] - a[1]) * t),
+      Math.round(a[2] + (b[2] - a[2]) * t)
+    ];
+  }
+  function rgb(c, a) {
+    return a != null
+      ? 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'
+      : 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')';
+  }
+
+  /* ============================================================
+     Pre-computed Scene Data
+     ============================================================ */
+  // Stars
+  const stars = Array.from({ length: 120 }, () => ({
+    x: Math.random(), y: Math.random() * 0.55,
+    r: 0.3 + Math.random() * 1.4,
+    spd: 0.6 + Math.random() * 2.2,
+    off: Math.random() * Math.PI * 2
+  }));
+
+  // Clouds
+  const clouds = Array.from({ length: 5 }, () => ({
+    x: Math.random(),
+    y: 0.1 + Math.random() * 0.24,
+    w: 0.05 + Math.random() * 0.07,
+    spd: (0.00004 + Math.random() * 0.0001) * (Math.random() > 0.5 ? 1 : -1),
+    a: 0.18 + Math.random() * 0.28
+  }));
+
+  // Mountain profiles
+  function genMtn(n, seed) {
+    const pts = [];
+    for (let i = 0; i <= n; i++) {
+      const x = i / n;
+      let y = Math.sin(x * 3.2 + seed) * 0.35
+            + Math.sin(x * 7.8 + seed * 2) * 0.22
+            + Math.sin(x * 13.1 + seed * 3) * 0.12;
+      y += Math.exp(-((x - 0.28) ** 2) / 0.012) * 0.55;
+      y += Math.exp(-((x - 0.68) ** 2) / 0.018) * 0.4;
+      pts.push({ x, y: Math.max(0, y) });
+    }
+    return pts;
+  }
+  const mtnFar  = genMtn(50, 1.3);
+  const mtnNear = genMtn(50, 4.1);
+
+  // Trees
+  const trees = Array.from({ length: 14 }, (_, i) => ({
+    x: 0.03 + (i / 14) * 0.94 + Math.sin(i * 2.7) * 0.015,
+    h: 14 + Math.random() * 22,
+    w: 5 + Math.random() * 5,
+    pine: Math.random() > 0.35
+  }));
+
+  // Birds (V-shapes that animate during daytime)
+  const birds = Array.from({ length: 4 }, () => ({
+    x: Math.random(), y: 0.15 + Math.random() * 0.2,
+    spd: 0.00008 + Math.random() * 0.00012,
+    wingSpd: 3 + Math.random() * 3,
+    wingOff: Math.random() * 6.28,
+    size: 3 + Math.random() * 3
+  }));
+
+  /* ============================================================
+     Sky Color System
+     ============================================================ */
+  const S = {
+    night: { t: [8, 8, 28],     b: [14, 14, 40] },
+    dawn:  { t: [35, 22, 68],   b: [175, 85, 55] },
+    rise:  { t: [65, 105, 185], b: [235, 135, 65] },
+    day:   { t: [48, 128, 218], b: [115, 185, 242] },
+    set:   { t: [48, 38, 105],  b: [235, 105, 42] },
+    dusk:  { t: [22, 18, 55],   b: [125, 48, 38] }
+  };
+
+  function skyAt(t, sr, ss) {
+    let top, bot;
+    if      (t < sr - 1)   { top = S.night.t; bot = S.night.b; }
+    else if (t < sr - 0.2) { const p = (t - sr + 1) / 0.8; top = lerpC(S.night.t, S.dawn.t, p); bot = lerpC(S.night.b, S.dawn.b, p); }
+    else if (t < sr + 0.5) { const p = (t - sr + 0.2) / 0.7; top = lerpC(S.dawn.t, S.rise.t, p); bot = lerpC(S.dawn.b, S.rise.b, p); }
+    else if (t < sr + 2)   { const p = (t - sr - 0.5) / 1.5; top = lerpC(S.rise.t, S.day.t, p); bot = lerpC(S.rise.b, S.day.b, p); }
+    else if (t < ss - 2)   { top = S.day.t; bot = S.day.b; }
+    else if (t < ss - 0.3) { const p = (t - ss + 2) / 1.7; top = lerpC(S.day.t, S.set.t, p); bot = lerpC(S.day.b, S.set.b, p); }
+    else if (t < ss + 0.5) { const p = (t - ss + 0.3) / 0.8; top = lerpC(S.set.t, S.dusk.t, p); bot = lerpC(S.set.b, S.dusk.b, p); }
+    else if (t < ss + 1.2) { const p = (t - ss - 0.5) / 0.7; top = lerpC(S.dusk.t, S.night.t, p); bot = lerpC(S.dusk.b, S.night.b, p); }
+    else                    { top = S.night.t; bot = S.night.b; }
+    return { top, bot };
+  }
+
+  /* ============================================================
+     Sun Position on Arc
+     ============================================================ */
+  function sunPos(t, sr, ss, w, h) {
+    const hz = h * 0.62;
+    const prog = clamp01((t - sr) / (ss - sr));
+    const x = lerp(w * 0.07, w * 0.93, prog);
+    const y = hz - Math.sin(prog * Math.PI) * h * 0.42;
+    return { x, y, prog, hz };
+  }
+
+  /* ============================================================
+     Main Draw
+     ============================================================ */
+  function draw(ts) {
+    sizeCanvas();
+    const w = cvW, h = cvH;
+    if (w === 0 || h === 0) return;
+
+    const now = new Date();
+    const tH = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+    const { sunrise: sr, sunset: ss } = calcSunTimes(now);
+    const sec = ts / 1000;
+    const hz = h * 0.62;
+    const isDay = tH > sr + 0.5 && tH < ss - 0.5;
+
+    // ---- Sky Gradient ----
+    const sky = skyAt(tH, sr, ss);
+    const skyG = ctx.createLinearGradient(0, 0, 0, hz);
+    skyG.addColorStop(0, rgb(sky.top));
+    skyG.addColorStop(1, rgb(sky.bot));
+    ctx.fillStyle = skyG;
+    ctx.fillRect(0, 0, w, hz);
+
+    // Ground base
+    const nightFactor = isDay ? 0 : clamp01(tH > 12 ? (tH - ss + 0.5) / 1.5 : (sr - 0.5 - tH) / 1.5);
+    const gndBase = lerpC([28, 58, 38], [8, 16, 10], nightFactor);
+    ctx.fillStyle = rgb(gndBase);
+    ctx.fillRect(0, hz, w, h - hz);
+
+    // ---- Stars ----
+    let starA = 0;
+    if (tH < sr - 0.5)      starA = 1;
+    else if (tH < sr + 0.8) starA = 1 - (tH - sr + 0.5) / 1.3;
+    else if (tH > ss - 0.5 && tH < ss + 1.2) starA = (tH - ss + 0.5) / 1.7;
+    else if (tH >= ss + 1.2) starA = 1;
+
+    if (starA > 0.01) {
+      stars.forEach(s => {
+        const tw = 0.25 + 0.75 * Math.pow(Math.sin(sec * s.spd + s.off), 2);
+        ctx.beginPath();
+        ctx.arc(s.x * w, s.y * h, s.r, 0, 6.2832);
+        ctx.fillStyle = 'rgba(255,255,235,' + (starA * tw * 0.85).toFixed(3) + ')';
+        ctx.fill();
+      });
+    }
+
+    // ---- Moon ----
+    if (starA > 0.12) {
+      const mx = w * 0.82, my = h * 0.11, mr = 15;
+      // Glow
+      const mg = ctx.createRadialGradient(mx, my, mr * 0.4, mx, my, mr * 3.8);
+      mg.addColorStop(0, 'rgba(175,195,255,' + (0.12 * starA).toFixed(3) + ')');
+      mg.addColorStop(1, 'transparent');
+      ctx.fillStyle = mg;
+      ctx.fillRect(mx - mr * 4, my - mr * 4, mr * 8, mr * 8);
+      // Body
+      ctx.beginPath();
+      ctx.arc(mx, my, mr, 0, 6.2832);
+      ctx.fillStyle = 'rgba(210,220,248,' + (starA * 0.85).toFixed(3) + ')';
+      ctx.fill();
+      // Craters
+      [[-4, -2, 3], [5, 4, 2.5], [1, -6, 2]].forEach(([dx, dy, r]) => {
+        ctx.beginPath();
+        ctx.arc(mx + dx, my + dy, r, 0, 6.2832);
+        ctx.fillStyle = 'rgba(180,190,220,' + (starA * 0.35).toFixed(3) + ')';
+        ctx.fill();
+      });
+    }
+
+    // ---- Sun Arc (dotted path) ----
+    ctx.save();
+    ctx.setLineDash([3, 5]);
+    ctx.beginPath();
+    for (let i = 0; i <= 80; i++) {
+      const tt = sr + (i / 80) * (ss - sr);
+      const p = sunPos(tt, sr, ss, w, h);
+      i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+    }
+    ctx.strokeStyle = isDay ? 'rgba(255,195,45,0.22)' : 'rgba(255,195,45,0.06)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    // Sunrise & sunset markers
+    [sunPos(sr, sr, ss, w, h), sunPos(ss, sr, ss, w, h)].forEach(p => {
+      ctx.beginPath(); ctx.arc(p.x, p.y, 3.5, 0, 6.2832);
+      ctx.fillStyle = 'rgba(255,170,50,0.3)'; ctx.fill();
+      ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, 6.2832);
+      ctx.fillStyle = 'rgba(255,210,80,0.55)'; ctx.fill();
+    });
+
+    // ---- Clouds ----
+    clouds.forEach(c => {
+      c.x += c.spd;
+      if (c.x > 1.15) c.x = -0.12;
+      if (c.x < -0.12) c.x = 1.15;
+      const cx = c.x * w, cy = c.y * h, cw = c.w * w;
+      const ca = isDay ? c.a : c.a * 0.12;
+      ctx.fillStyle = 'rgba(255,255,255,' + ca.toFixed(3) + ')';
+      ctx.beginPath(); ctx.ellipse(cx, cy, cw, cw * 0.32, 0, 0, 6.2832); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(cx - cw * 0.5, cy + 2, cw * 0.55, cw * 0.26, 0, 0, 6.2832); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(cx + cw * 0.45, cy + 1, cw * 0.5, cw * 0.24, 0, 0, 6.2832); ctx.fill();
+    });
+
+    // ---- Birds (daytime) ----
+    if (isDay) {
+      birds.forEach(b => {
+        b.x += b.spd;
+        if (b.x > 1.1) b.x = -0.05;
+        const bx = b.x * w, by = b.y * h;
+        const wing = Math.sin(sec * b.wingSpd + b.wingOff) * 4;
+        ctx.beginPath();
+        ctx.moveTo(bx - b.size, by + wing);
+        ctx.quadraticCurveTo(bx - b.size * 0.3, by - b.size * 0.4, bx, by);
+        ctx.quadraticCurveTo(bx + b.size * 0.3, by - b.size * 0.4, bx + b.size, by + wing);
+        ctx.strokeStyle = 'rgba(30,30,50,0.35)';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      });
+    }
+
+    // ---- Sun ----
+    const sunVisible = tH >= sr - 0.4 && tH <= ss + 0.4;
+    let sp = null;
+    if (sunVisible) {
+      const tc = Math.max(sr, Math.min(ss, tH));
+      sp = sunPos(tc, sr, ss, w, h);
+      const R = 20;
+
+      // Atmospheric glow layers
+      for (let i = 5; i >= 0; i--) {
+        const gr = R + i * 16;
+        const ga = Math.max(0, 0.055 - i * 0.009);
+        const g = ctx.createRadialGradient(sp.x, sp.y, R * 0.3, sp.x, sp.y, gr);
+        g.addColorStop(0, 'rgba(255,200,50,' + ga + ')');
+        g.addColorStop(1, 'transparent');
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(sp.x, sp.y, gr, 0, 6.2832); ctx.fill();
+      }
+
+      // Rotating rays
+      ctx.save();
+      ctx.translate(sp.x, sp.y);
+      ctx.rotate(sec * 0.06);
+      for (let i = 0; i < 12; i++) {
+        const a = (i / 12) * 6.2832;
+        const rl = R + 5 + Math.sin(sec * 1.5 + i * 0.8) * 4;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(a) * (R + 1), Math.sin(a) * (R + 1));
+        ctx.lineTo(Math.cos(a) * rl, Math.sin(a) * rl);
+        ctx.strokeStyle = 'rgba(255,210,70,0.22)';
+        ctx.lineWidth = 1.8;
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // Sun body
+      const sg = ctx.createRadialGradient(sp.x - 3, sp.y - 3, 0, sp.x, sp.y, R);
+      sg.addColorStop(0, '#fff8e0');
+      sg.addColorStop(0.35, '#ffe050');
+      sg.addColorStop(1, '#ff9200');
+      ctx.beginPath(); ctx.arc(sp.x, sp.y, R, 0, 6.2832);
+      ctx.fillStyle = sg; ctx.fill();
+
+      // Horizon glow (sunrise / sunset)
+      const distHz = hz - sp.y;
+      if (distHz < 75 && distHz > -25) {
+        const gi = clamp01(1 - distHz / 75);
+        const hg = ctx.createRadialGradient(sp.x, hz, 0, sp.x, hz, 130);
+        hg.addColorStop(0, 'rgba(255,135,35,' + (0.35 * gi).toFixed(3) + ')');
+        hg.addColorStop(0.5, 'rgba(255,75,20,' + (0.15 * gi).toFixed(3) + ')');
+        hg.addColorStop(1, 'transparent');
+        ctx.fillStyle = hg;
+        ctx.fillRect(sp.x - 130, hz - 130, 260, 260);
+      }
+    }
+
+    // ---- Far Mountains ----
+    ctx.beginPath();
+    ctx.moveTo(0, hz);
+    mtnFar.forEach(p => ctx.lineTo(p.x * w, hz - p.y * 55));
+    ctx.lineTo(w, hz); ctx.closePath();
+    const fmg = ctx.createLinearGradient(0, hz - 55, 0, hz);
+    if (isDay) {
+      fmg.addColorStop(0, 'rgba(38,68,52,0.65)');
+      fmg.addColorStop(1, 'rgba(32,58,42,0.88)');
+    } else {
+      fmg.addColorStop(0, 'rgba(12,22,16,0.75)');
+      fmg.addColorStop(1, 'rgba(8,15,10,0.92)');
+    }
+    ctx.fillStyle = fmg; ctx.fill();
+
+    // ---- Near Hills ----
+    ctx.beginPath();
+    ctx.moveTo(0, hz + 4);
+    mtnNear.forEach(p => ctx.lineTo(p.x * w, hz + 4 - p.y * 28));
+    ctx.lineTo(w, hz + 4); ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath();
+    const nmg = ctx.createLinearGradient(0, hz - 22, 0, h);
+    if (isDay) {
+      nmg.addColorStop(0, 'rgb(28,62,38)');
+      nmg.addColorStop(1, 'rgb(18,48,28)');
+    } else {
+      nmg.addColorStop(0, 'rgb(8,20,12)');
+      nmg.addColorStop(1, 'rgb(5,12,7)');
+    }
+    ctx.fillStyle = nmg; ctx.fill();
+
+    // ---- Trees ----
+    trees.forEach(t => {
+      const tx = t.x * w, ty = hz + 2;
+      const ta = isDay ? 0.45 : 0.72;
+      ctx.fillStyle = 'rgba(6,22,10,' + ta + ')';
+      ctx.fillRect(tx - 1.5, ty - t.h * 0.35, 3, t.h * 0.35);
+      if (t.pine) {
+        for (let l = 0; l < 3; l++) {
+          const ly = ty - t.h * (0.28 + l * 0.24);
+          const lw = t.w * (1.25 - l * 0.3);
+          ctx.beginPath();
+          ctx.moveTo(tx, ly - t.h * 0.22);
+          ctx.lineTo(tx - lw, ly);
+          ctx.lineTo(tx + lw, ly);
+          ctx.closePath(); ctx.fill();
+        }
+      } else {
+        ctx.beginPath();
+        ctx.arc(tx, ty - t.h * 0.52, t.w * 0.85, 0, 6.2832);
+        ctx.fill();
+      }
+    });
+
+    // ---- Ground Light Patch ----
+    if (sp && sp.y < hz) {
+      const lg = ctx.createRadialGradient(sp.x, hz + 8, 0, sp.x, hz + 8, 90);
+      lg.addColorStop(0, 'rgba(255,200,75,' + (isDay ? 0.07 : 0.03) + ')');
+      lg.addColorStop(1, 'transparent');
+      ctx.fillStyle = lg;
+      ctx.fillRect(sp.x - 90, hz, 180, h - hz);
+    }
+
+    // ---- Lake ----
+    const lkY = hz + (h - hz) * 0.32;
+    const lkH = (h - hz) * 0.18;
+    const lkW = w * 0.2;
+    ctx.beginPath();
+    ctx.ellipse(w * 0.5, lkY + lkH / 2, lkW, lkH / 2, 0, 0, 6.2832);
+    const lkg = ctx.createLinearGradient(0, lkY, 0, lkY + lkH);
+    if (isDay) {
+      lkg.addColorStop(0, rgb(sky.bot, 0.22));
+      lkg.addColorStop(1, rgb(sky.bot, 0.08));
+    } else {
+      lkg.addColorStop(0, 'rgba(18,28,55,0.28)');
+      lkg.addColorStop(1, 'rgba(10,15,30,0.12)');
+    }
+    ctx.fillStyle = lkg; ctx.fill();
+
+    // Water shimmer
+    for (let i = 0; i < 8; i++) {
+      const sx = w * 0.34 + (i / 8) * w * 0.32;
+      const sy = lkY + 3 + Math.sin(sec * 1.1 + i * 0.85) * 4;
+      const sw = 5 + Math.sin(sec * 0.9 + i) * 3;
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(sx + sw, sy);
+      ctx.strokeStyle = 'rgba(255,255,255,' + (isDay ? 0.1 : 0.03) + ')';
+      ctx.lineWidth = 0.6;
+      ctx.stroke();
+    }
+
+    // Sun reflection in lake
+    if (sp && sp.y < hz + 15) {
+      const rx = sp.x, ry = lkY + lkH * 0.3;
+      const rg = ctx.createRadialGradient(rx, ry, 0, rx, ry, 22);
+      rg.addColorStop(0, 'rgba(255,200,70,' + (isDay ? 0.12 : 0.04) + ')');
+      rg.addColorStop(1, 'transparent');
+      ctx.fillStyle = rg;
+      ctx.beginPath(); ctx.arc(rx, ry, 22, 0, 6.2832); ctx.fill();
+    }
+
+    // ---- Fireflies (dusk/dawn) ----
+    const fireflyA = clamp01(1 - Math.abs(tH - sr) / 1.2) * 0.5 +
+                     clamp01(1 - Math.abs(tH - ss) / 1.2) * 0.5;
+    if (fireflyA > 0.05) {
+      for (let i = 0; i < 6; i++) {
+        const fx = (0.15 + Math.sin(sec * 0.3 + i * 1.7) * 0.35) * w;
+        const fy = hz + (0.05 + Math.sin(sec * 0.2 + i * 2.3) * 0.12) * (h - hz);
+        const fa = fireflyA * (0.4 + 0.6 * Math.sin(sec * 2.5 + i * 1.1) ** 2);
+        const fg = ctx.createRadialGradient(fx, fy, 0, fx, fy, 6);
+        fg.addColorStop(0, 'rgba(220,255,120,' + fa.toFixed(3) + ')');
+        fg.addColorStop(1, 'transparent');
+        ctx.fillStyle = fg;
+        ctx.fillRect(fx - 6, fy - 6, 12, 12);
+      }
+    }
+
+    // ---- Vignette ----
+    const vig = ctx.createRadialGradient(w / 2, h / 2, w * 0.22, w / 2, h / 2, w * 0.65);
+    vig.addColorStop(0, 'transparent');
+    vig.addColorStop(1, 'rgba(0,0,0,0.28)');
+    ctx.fillStyle = vig;
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  /* ============================================================
+     Animation Loop
+     ============================================================ */
+  let lastBg = '';
+
+  function tick(ts) {
+    const now = new Date();
+
+    // --- Update split-flap clock ---
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    const sc = String(now.getSeconds()).padStart(2, '0');
+    const timeStr = hh + mm + sc;
+
+    if (timeStr !== prevTimeStr) {
+      for (let i = 0; i < 6; i++) {
+        if (timeStr[i] !== prevTimeStr[i]) flipDigit(digitEls[i], timeStr[i]);
+      }
+      prevTimeStr = timeStr;
+    }
+
+    // --- Text displays ---
+    const yr = now.getFullYear();
+    const mo = String(now.getMonth() + 1).padStart(2, '0');
+    const dy = String(now.getDate()).padStart(2, '0');
+    document.getElementById('dateText').textContent = yr + '.' + mo + '.' + dy;
+    document.getElementById('weekdayText').textContent = WEEKDAYS[now.getDay()];
+    document.getElementById('backTime').textContent = hh + ':' + mm + ':' + sc;
+    document.getElementById('backDate').textContent = yr + '.' + mo + '.' + dy + ' ' + WEEKDAYS[now.getDay()];
+
+    const { sunrise, sunset } = calcSunTimes(now);
+    document.getElementById('srLabel').textContent = '\u2600 ' + fmtHour(sunrise);
+    document.getElementById('ssLabel').textContent = '\u263D ' + fmtHour(sunset);
+
+    // --- Canvas ---
+    draw(ts);
+
+    // --- Page background tint ---
+    const tH = now.getHours() + now.getMinutes() / 60;
+    const sk = skyAt(tH, sunrise, sunset);
+    const bgStr = 'rgb(' +
+      Math.max(4, Math.round(sk.top[0] * 0.22)) + ',' +
+      Math.max(4, Math.round(sk.top[1] * 0.22)) + ',' +
+      Math.max(4, Math.round(sk.top[2] * 0.22)) + ')';
+    if (bgStr !== lastBg) {
+      document.body.style.background = bgStr;
+      lastBg = bgStr;
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  requestAnimationFrame(tick);
+  </script>
+</body>
+</html>

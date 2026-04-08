@@ -12,6 +12,7 @@ Vibe Coding 项目合集 — 每个目录均由 **50 字以内的提示词** 一
 | `wangzhen3691_2` | 始皇防蛐蛐 · ShiHuang Guard | 全栈专家角色，用 Go/Node.js 构建高并发后端。设计插件化架构与实时监控系统。加入"始皇防蛐蛐"模块：正则监听全站关键词，触发自动化预警。界面现代且易扩展。 | Claude Opus 4.6 | Go + React + WebSocket + Tailwind CSS |
 | `Sora` | Sora 笔记 | 基于Next.js构建个人笔记全栈应用，要求支持markdown渲染，支持用任务看板管理笔记。风格要求与notion一致。 | Claude Opus 4.6 | Next.js 14 + React 18 + Tailwind CSS + Prisma + SQLite |
 | `不为人知的鹅妈妈童谣` | GPU 视频 AI 流水线工具 | 构建一个视频字幕擦除，TTS生成合并到视频，语音自动对口型，ai换脸的工具，接入GPU | gpt-5.4 | Python + ffmpeg + TOML + unittest |
+| `mjjs` | MJJS AI 代码助手 | 写一个vscode插件，能右键解释代码，能补全的，接入自定义大模型 | Claude Opus 4.6 | TypeScript + VS Code Extension API + OpenAI Compatible API |
 
 ### TechnologyStar 提示词
 

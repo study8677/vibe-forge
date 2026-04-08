@@ -1,0 +1,169 @@
+{
+  "name": "mjjs-ai-assistant",
+  "displayName": "MJJS AI Assistant",
+  "description": "AI 代码助手 - 右键解释代码、智能补全，接入自定义大模型",
+  "version": "0.1.0",
+  "publisher": "mjjs",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Machine Learning"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "icon": "icon.png",
+  "contributes": {
+    "commands": [
+      {
+        "command": "mjjs.explainCode",
+        "title": "AI: 解释代码"
+      },
+      {
+        "command": "mjjs.explainCodeDetail",
+        "title": "AI: 详细解释代码"
+      },
+      {
+        "command": "mjjs.optimizeCode",
+        "title": "AI: 优化代码"
+      },
+      {
+        "command": "mjjs.addComments",
+        "title": "AI: 添加注释"
+      },
+      {
+        "command": "mjjs.findBugs",
+        "title": "AI: 查找潜在问题"
+      },
+      {
+        "command": "mjjs.triggerCompletion",
+        "title": "AI: 触发代码补全"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "submenu": "mjjs.aiMenu",
+          "group": "mjjs_ai@1"
+        }
+      ],
+      "mjjs.aiMenu": [
+        {
+          "command": "mjjs.explainCode",
+          "when": "editorHasSelection",
+          "group": "1_explain@1"
+        },
+        {
+          "command": "mjjs.explainCodeDetail",
+          "when": "editorHasSelection",
+          "group": "1_explain@2"
+        },
+        {
+          "command": "mjjs.optimizeCode",
+          "when": "editorHasSelection",
+          "group": "2_improve@1"
+        },
+        {
+          "command": "mjjs.addComments",
+          "when": "editorHasSelection",
+          "group": "2_improve@2"
+        },
+        {
+          "command": "mjjs.findBugs",
+          "when": "editorHasSelection",
+          "group": "2_improve@3"
+        }
+      ]
+    },
+    "submenus": [
+      {
+        "id": "mjjs.aiMenu",
+        "label": "MJJS AI 助手"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "mjjs.explainCode",
+        "key": "ctrl+shift+e",
+        "mac": "cmd+shift+e",
+        "when": "editorHasSelection"
+      },
+      {
+        "command": "mjjs.triggerCompletion",
+        "key": "ctrl+shift+space",
+        "mac": "cmd+shift+space",
+        "when": "editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "title": "MJJS AI Assistant",
+      "properties": {
+        "mjjs.apiEndpoint": {
+          "type": "string",
+          "default": "https://api.openai.com/v1/chat/completions",
+          "description": "大模型 API 地址（兼容 OpenAI 格式），例如: https://api.deepseek.com/v1/chat/completions"
+        },
+        "mjjs.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API Key（密钥）"
+        },
+        "mjjs.modelName": {
+          "type": "string",
+          "default": "gpt-3.5-turbo",
+          "description": "模型名称，例如: gpt-4, deepseek-chat, qwen-turbo, glm-4"
+        },
+        "mjjs.maxTokens": {
+          "type": "number",
+          "default": 2048,
+          "description": "最大生成 token 数"
+        },
+        "mjjs.temperature": {
+          "type": "number",
+          "default": 0.3,
+          "description": "生成温度 (0-1)，值越低结果越确定"
+        },
+        "mjjs.completionEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "是否启用 AI 代码补全"
+        },
+        "mjjs.completionDebounceMs": {
+          "type": "number",
+          "default": 500,
+          "description": "代码补全触发延迟（毫秒）"
+        },
+        "mjjs.completionMaxLines": {
+          "type": "number",
+          "default": 50,
+          "description": "补全时向模型发送的上下文行数"
+        },
+        "mjjs.systemPrompt": {
+          "type": "string",
+          "default": "你是一个专业的编程助手，精通各种编程语言和框架。请用中文回答。",
+          "description": "系统提示词（System Prompt）"
+        },
+        "mjjs.completionSystemPrompt": {
+          "type": "string",
+          "default": "You are a code completion engine. Only output the code that should come next. Do not include explanations, markdown formatting, or the existing code. Output raw code only.",
+          "description": "代码补全的系统提示词"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.3",
+    "@vscode/vsce": "^2.22.0"
+  }
+}

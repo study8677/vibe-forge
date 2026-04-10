@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>墨 · 工具集</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>墨</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="scanlines"></div>
+    <div id="app">
+        <header class="header">
+            <div class="header-inner">
+                <a href="#" class="logo" id="logo">
+                    <span class="logo-char">墨</span>
+                    <span class="logo-text">TOOLS</span>
+                </a>
+                <div class="search-wrapper">
+                    <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="M21 21l-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" id="search" class="search-input" placeholder="搜索工具..." autocomplete="off">
+                </div>
+                <div class="header-meta">
+                    <span class="tool-count" id="tool-count"></span>
+                </div>
+            </div>
+        </header>
+
+        <nav class="nav" id="nav">
+            <button class="nav-btn active" data-cat="all">全部</button>
+            <button class="nav-btn" data-cat="encoding">编解码</button>
+            <button class="nav-btn" data-cat="crypto">加密解密</button>
+            <button class="nav-btn" data-cat="text">文本工具</button>
+            <button class="nav-btn" data-cat="image">图片工具</button>
+            <button class="nav-btn" data-cat="dev">开发工具</button>
+        </nav>
+
+        <main class="main" id="main"></main>
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/tools/encoding.js"></script>
+    <script src="js/tools/crypto.js"></script>
+    <script src="js/tools/text.js"></script>
+    <script src="js/tools/image.js"></script>
+    <script src="js/tools/dev.js"></script>
+    <script>App.init();</script>
+</body>
+</html>

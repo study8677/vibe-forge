@@ -24,6 +24,7 @@ Vibe Coding 项目合集 — 每个目录均由 **50 字以内的提示词** 一
 | `zwy0724` | 日升日落时间卡片 | 完成一个前端项目，语言不限，内容设计时间卡片翻转效果，背面同步现实时间展示太阳轨迹，实现日升日落与动态昼夜光影。 | Claude Opus 4.6 | HTML / CSS 3D / Canvas |
 | `小懒猫` | 万事录 私人管家 | 见下方 | gpt-5.4 | HTML + CSS + JavaScript ES Modules + localStorage + Node test |
 | `otron` | OTron 远程连接工具 | 用electron搭建一个远程连接工具，需要拥有管理连接、连接导入导出、文件上传下载文件功能。 | Claude Opus 4.6 | Electron + xterm.js + ssh2 |
+| `media-station` | 局域网媒体站 | 开发一个轻量高效局域网媒体应用，类似群晖Photo/Video Station。支持千万级文件，高性能数据库，照片自动生成缩略图。 | Claude Opus 4.6 | Rust / Axum / SQLite / Vanilla JS |
 
 ### TechnologyStar 提示词
 

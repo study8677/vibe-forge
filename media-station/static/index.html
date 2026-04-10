@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Media Station</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🖼</text></svg>">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<!-- ========== Header ========== -->
+<header id="app-header">
+  <div class="logo">Media Station</div>
+  <nav id="nav">
+    <button class="nav-btn active" data-view="gallery">Gallery</button>
+    <button class="nav-btn" data-view="timeline">Timeline</button>
+    <button class="nav-btn" data-view="folders">Folders</button>
+  </nav>
+  <div class="search-box">
+    <input type="text" placeholder="Search files..." id="search-input" autocomplete="off">
+  </div>
+  <div class="header-actions">
+    <select id="type-filter">
+      <option value="">All</option>
+      <option value="photo">Photos</option>
+      <option value="video">Videos</option>
+    </select>
+    <select id="sort-select">
+      <option value="modified">Date Modified</option>
+      <option value="taken">Date Taken</option>
+      <option value="name">Name</option>
+      <option value="size">Size</option>
+    </select>
+    <button id="scan-btn" title="Trigger full scan">Scan</button>
+  </div>
+</header>
+
+<!-- ========== Stats bar ========== -->
+<div id="stats-bar">Loading...</div>
+
+<!-- ========== Main layout ========== -->
+<main id="app-main">
+  <aside id="folder-sidebar" class="hidden">
+    <div id="folder-tree"></div>
+  </aside>
+  <div id="content-area">
+    <div id="gallery-grid" class="media-grid"></div>
+    <div id="loading-indicator" class="hidden">
+      <div class="spinner"></div>
+      <span>Loading...</span>
+    </div>
+    <div id="empty-state" class="hidden">
+      <p>No media files found</p>
+      <p class="hint">Add media directories and trigger a scan to get started.</p>
+    </div>
+  </div>
+</main>
+
+<!-- ========== Lightbox ========== -->
+<div id="lightbox" class="hidden">
+  <div class="lb-backdrop"></div>
+  <button class="lb-close" title="Close (Esc)">&times;</button>
+  <button class="lb-prev" title="Previous (Left)">&lsaquo;</button>
+  <button class="lb-next" title="Next (Right)">&rsaquo;</button>
+  <div class="lb-stage">
+    <div class="lb-media"></div>
+  </div>
+  <div class="lb-info-bar"></div>
+</div>
+
+<script src="/app.js"></script>
+</body>
+</html>

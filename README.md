@@ -30,6 +30,7 @@ Vibe Coding 项目合集 — 每个目录均由 **50 字以内的提示词** 一
 | `servermon` | 轻量级服务器监控平台 | 基于Go后端与React前端开发类似哪吒探针的轻量级服务器监控告警运维可视化管理平台系统 | Claude Opus 4.6 | Go + React + SQLite + WebSocket + TailwindCSS |
 | `浣熊` | 浣熊 LLM API 测试平台 | 开发个大模型API测试平台，定期测不同厂商、模型的调用成功率、agent能力等性能指标，有面板多维度分类展示，可cli | Claude Opus 4.6 | Python / FastAPI / SQLite / Chart.js / Typer |
 | `长毛象` | 个人物品管理 | 开发一个个人物品管理应用，nextjs，web、移动端适配。 | Claude Opus 4.6 | Next.js 14 + TypeScript + Tailwind CSS |
+| `jooooody` | 电商比价分析工具 | 输入关键字和价格，自动在拼多多淘宝上搜索，浏览前100个商品及对应100条最新评价和所有追评，综合出最优的 | Claude Opus 4.6 | Python / Playwright / jieba / Rich |
 
 ### TechnologyStar 提示词
 

@@ -1,0 +1,100 @@
+gateway:
+  name: travelport-unified-gateway
+  version: "1.0.0"
+  default_timeout: 30
+  log_level: INFO
+
+# ---------------------------------------------------------------------------
+# Travelport schema version (UAPI namespace suffix, e.g. air_v52_0)
+# ---------------------------------------------------------------------------
+schema_version: "v52_0"
+
+# ---------------------------------------------------------------------------
+# Multi-account credential definitions
+# Each account binds a protocol (soap | json) with its credentials.
+# ---------------------------------------------------------------------------
+accounts:
+  - id: soap_domestic
+    name: "Domestic SOAP/UAPI Account"
+    protocol: soap
+    pcc: "1V1K"
+    provider: "1G"
+    credentials:
+      target_branch: "P7117585"
+      username: "Universal API/uAPI9876543210"
+      password: "${TRAVELPORT_SOAP_DOMESTIC_PWD}"
+    endpoints:
+      AirService: "https://americas.universal-api.travelport.com/B2BGateway/connect/uAPI/AirService"
+      HotelService: "https://americas.universal-api.travelport.com/B2BGateway/connect/uAPI/HotelService"
+      UniversalRecordService: "https://americas.universal-api.travelport.com/B2BGateway/connect/uAPI/UniversalRecordService"
+
+  - id: soap_intl
+    name: "International SOAP/UAPI Account"
+    protocol: soap
+    pcc: "2G2H"
+    provider: "1G"
+    credentials:
+      target_branch: "P7117586"
+      username: "Universal API/uAPI1234567890"
+      password: "${TRAVELPORT_SOAP_INTL_PWD}"
+    endpoints:
+      AirService: "https://apac.universal-api.travelport.com/B2BGateway/connect/uAPI/AirService"
+      HotelService: "https://apac.universal-api.travelport.com/B2BGateway/connect/uAPI/HotelService"
+      UniversalRecordService: "https://apac.universal-api.travelport.com/B2BGateway/connect/uAPI/UniversalRecordService"
+
+  - id: json_main
+    name: "Travelport+ JSON Account"
+    protocol: json
+    pcc: "3P3Q"
+    provider: "TravelportPlus"
+    credentials:
+      client_id: "${TRAVELPORT_JSON_CLIENT_ID}"
+      client_secret: "${TRAVELPORT_JSON_CLIENT_SECRET}"
+      token_endpoint: "https://oauth.travelport.com/oauth/token"
+    endpoints:
+      base_url: "https://api.travelport.com/11/air"
+
+# ---------------------------------------------------------------------------
+# Operation routing rules
+# Evaluated top-down; first match wins.  Omit `conditions` for a catch-all.
+# ---------------------------------------------------------------------------
+routing:
+  default_account: soap_domestic
+
+  rules:
+    # --- Air Search ---
+    - operation: air_search
+      conditions:
+        - field: origin_country
+          operator: eq
+          value: CN
+      account_id: soap_domestic
+
+    - operation: air_search
+      conditions:
+        - field: origin_country
+          operator: neq
+          value: CN
+      account_id: soap_intl
+
+    # --- Air Price / Book / Ticket (domestic default) ---
+    - operation: air_price
+      account_id: soap_domestic
+
+    - operation: air_book
+      account_id: soap_domestic
+
+    - operation: air_ticket
+      account_id: soap_domestic
+
+    # --- PNR Retrieve ---
+    - operation: pnr_retrieve
+      account_id: soap_domestic
+
+    # --- JSON protocol override example ---
+    - operation: air_search
+      conditions:
+        - field: protocol_override
+          operator: eq
+          value: json
+      account_id: json_main

@@ -27,6 +27,7 @@ Vibe Coding 项目合集 — 每个目录均由 **50 字以内的提示词** 一
 | `media-station` | 局域网媒体站 | 开发一个轻量高效局域网媒体应用，类似群晖Photo/Video Station。支持千万级文件，高性能数据库，照片自动生成缩略图。 | Claude Opus 4.6 | Rust / Axum / SQLite / Vanilla JS |
 | `kevin001` | Travelport统一网关 | 统一网关支持Travelport SOAP/XML与JSON多账号凭证按操作路由协议入参/出参标准化 | Claude Opus 4.6 | Python / FastAPI / Pydantic / httpx / lxml |
 | `SilleyZoeng` | Skill & Agent 评估平台 | 使用Harbor + promptfoo技术栈实现一个skill、agent的评估平台，skill、agent均在本地，有现成的harness框架和skill | Claude Opus 4.6 | Harbor + promptfoo + TypeScript + Docker |
+| `servermon` | 轻量级服务器监控平台 | 基于Go后端与React前端开发类似哪吒探针的轻量级服务器监控告警运维可视化管理平台系统 | Claude Opus 4.6 | Go + React + SQLite + WebSocket + TailwindCSS |
 
 ### TechnologyStar 提示词
 

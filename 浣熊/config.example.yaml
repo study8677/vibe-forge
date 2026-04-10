@@ -1,0 +1,79 @@
+# 浣熊 (Raccoon) LLM API Test Platform Configuration
+# Copy this file to config.yaml and fill in your API keys.
+# API keys can reference environment variables: ${ENV_VAR_NAME}
+
+database:
+  path: ./raccoon.db
+
+schedule:
+  interval: 30  # minutes between test runs
+
+concurrency: 5  # max parallel API calls
+
+providers:
+  openai:
+    type: openai
+    api_key: ${OPENAI_API_KEY}
+    base_url: https://api.openai.com/v1
+    models:
+      - gpt-4o
+      - gpt-4o-mini
+
+  anthropic:
+    type: anthropic
+    api_key: ${ANTHROPIC_API_KEY}
+    models:
+      - claude-sonnet-4-20250514
+
+  deepseek:
+    type: openai
+    api_key: ${DEEPSEEK_API_KEY}
+    base_url: https://api.deepseek.com
+    models:
+      - deepseek-chat
+
+  qwen:
+    type: openai
+    api_key: ${DASHSCOPE_API_KEY}
+    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+    models:
+      - qwen-turbo
+      - qwen-plus
+
+  moonshot:
+    type: openai
+    api_key: ${MOONSHOT_API_KEY}
+    base_url: https://api.moonshot.cn/v1
+    models:
+      - moonshot-v1-8k
+
+  zhipu:
+    type: openai
+    api_key: ${ZHIPU_API_KEY}
+    base_url: https://open.bigmodel.cn/api/paas/v4
+    models:
+      - glm-4
+
+  google:
+    type: openai
+    api_key: ${GOOGLE_API_KEY}
+    base_url: https://generativelanguage.googleapis.com/v1beta/openai/
+    models:
+      - gemini-2.0-flash
+
+tests:
+  basic_call:
+    enabled: true
+    timeout: 30
+  streaming:
+    enabled: true
+    timeout: 60
+  tool_use:
+    enabled: true
+    timeout: 60
+  agent_loop:
+    enabled: true
+    timeout: 120
+  json_output:
+    enabled: true
+    timeout: 30

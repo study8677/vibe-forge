@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>浣熊 Raccoon — LLM API Test Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;--card:#12141f;--border:#1e2133;
+  --green:#10b981;--red:#ef4444;--yellow:#f59e0b;--blue:#3b82f6;--purple:#8b5cf6;--cyan:#06b6d4;
+  --text:#e2e8f0;--muted:#64748b;--dim:#334155;
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.5}
+a{color:var(--cyan);text-decoration:none}
+
+/* Header */
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;background:#0f1019;border-bottom:1px solid var(--border)}
+.header h1{font-size:20px;font-weight:700}
+.header h1 span{color:var(--cyan);margin-right:6px}
+.header-actions{display:flex;gap:8px;align-items:center}
+.header-actions button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;transition:border-color .2s}
+.header-actions button:hover{border-color:var(--cyan)}
+.header-actions button.primary{background:var(--cyan);color:#000;border-color:var(--cyan);font-weight:600}
+.header-actions button.primary:hover{opacity:.85}
+#status{font-size:12px;color:var(--muted)}
+
+/* Filters */
+.filters{display:flex;gap:6px;padding:12px 24px;background:#0d0d14;border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center}
+.filters label{font-size:12px;color:var(--muted);margin-right:4px}
+.range-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:4px;cursor:pointer;font-size:12px;transition:all .2s}
+.range-btn.active,.range-btn:hover{background:var(--cyan);color:#000;border-color:var(--cyan)}
+
+/* Main content */
+.main{padding:20px 24px;max-width:1600px;margin:0 auto}
+
+/* Metric cards */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+.metric-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 20px}
+.metric-card .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.metric-card .value{font-size:28px;font-weight:700;margin-top:4px}
+.metric-card .sub{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* Chart grid */
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 20px}
+.chart-card h3{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--muted)}
+.chart-card canvas{width:100%!important;max-height:260px}
+
+/* Heatmap */
+.heatmap-section{margin-bottom:24px}
+.heatmap-section h3{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--muted)}
+.heatmap{width:100%;border-collapse:collapse;background:var(--card);border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.heatmap th{background:#0f1019;padding:10px 14px;text-align:left;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+.heatmap td{padding:8px 14px;border-bottom:1px solid var(--border);font-size:13px;text-align:center}
+.heatmap td:first-child{text-align:left;color:var(--cyan);font-weight:500}
+.heatmap tr:last-child td{border-bottom:none}
+.cell-pass{background:rgba(16,185,129,.15);color:var(--green)}
+.cell-warn{background:rgba(245,158,11,.15);color:var(--yellow)}
+.cell-fail{background:rgba(239,68,68,.15);color:var(--red)}
+.cell-na{color:var(--dim)}
+
+/* Results table */
+.results-section h3{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--muted)}
+.results-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.results-table th{background:#0f1019;padding:10px 14px;text-align:left;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+.results-table td{padding:8px 14px;border-bottom:1px solid var(--border);font-size:13px}
+.results-table tr:last-child td{border-bottom:none}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.badge-pass{background:rgba(16,185,129,.15);color:var(--green)}
+.badge-fail{background:rgba(239,68,68,.15);color:var(--red)}
+
+/* Loading */
+.loading{text-align:center;padding:40px;color:var(--muted)}
+
+@media(max-width:768px){
+  .charts{grid-template-columns:1fr}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1><span>🦝</span> 浣熊 LLM API Test Dashboard</h1>
+  <div class="header-actions">
+    <span id="status"></span>
+    <button onclick="refresh()">Refresh</button>
+  </div>
+</div>
+
+<div class="filters">
+  <label>Time Range:</label>
+  <button class="range-btn" data-range="1h">1H</button>
+  <button class="range-btn" data-range="6h">6H</button>
+  <button class="range-btn active" data-range="24h">24H</button>
+  <button class="range-btn" data-range="7d">7D</button>
+  <button class="range-btn" data-range="30d">30D</button>
+  <button class="range-btn" data-range="all">ALL</button>
+</div>
+
+<div class="main">
+  <!-- Metric Cards -->
+  <div class="metrics" id="metrics">
+    <div class="metric-card"><div class="label">Total Tests</div><div class="value" id="m-total">-</div></div>
+    <div class="metric-card"><div class="label">Success Rate</div><div class="value" id="m-rate">-</div><div class="sub" id="m-rate-sub"></div></div>
+    <div class="metric-card"><div class="label">Avg Latency</div><div class="value" id="m-latency">-</div></div>
+    <div class="metric-card"><div class="label">Active Models</div><div class="value" id="m-models">-</div><div class="sub" id="m-models-sub"></div></div>
+    <div class="metric-card"><div class="label">Last Run</div><div class="value" id="m-last" style="font-size:16px">-</div></div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts">
+    <div class="chart-card">
+      <h3>Success Rate by Provider</h3>
+      <canvas id="chart-providers"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Latency Trend</h3>
+      <canvas id="chart-latency"></canvas>
+    </div>
+  </div>
+
+  <!-- Heatmap -->
+  <div class="heatmap-section">
+    <h3>Success Rate Heatmap (Provider × Test Type)</h3>
+    <table class="heatmap" id="heatmap-table">
+      <thead><tr><th>Provider / Model</th></tr></thead>
+      <tbody><tr><td class="loading" colspan="6">Loading...</td></tr></tbody>
+    </table>
+  </div>
+
+  <!-- Recent Results -->
+  <div class="results-section">
+    <h3>Recent Test Results</h3>
+    <table class="results-table" id="results-table">
+      <thead>
+        <tr><th>Time</th><th>Provider</th><th>Model</th><th>Test</th><th>Status</th><th>Latency</th><th>TTFB</th><th>TPS</th><th>Score</th><th>Error</th></tr>
+      </thead>
+      <tbody><tr><td class="loading" colspan="10">Loading...</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+let timeRange = '24h';
+let providerChart = null;
+let latencyChart = null;
+
+const COLORS = ['#06b6d4','#8b5cf6','#10b981','#f59e0b','#ef4444','#3b82f6','#ec4899','#f97316','#14b8a6','#a855f7'];
+
+// Time range buttons
+document.querySelectorAll('.range-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    timeRange = btn.dataset.range;
+    refresh();
+  });
+});
+
+async function api(endpoint) {
+  const sep = endpoint.includes('?') ? '&' : '?';
+  const resp = await fetch(`/api/${endpoint}${sep}time_range=${timeRange}`);
+  return resp.json();
+}
+
+async function refresh() {
+  document.getElementById('status').textContent = 'Loading...';
+  try {
+    await Promise.all([loadSummary(), loadProviders(), loadTrends(), loadHeatmap(), loadResults()]);
+    document.getElementById('status').textContent = `Updated ${new Date().toLocaleTimeString()}`;
+  } catch(e) {
+    document.getElementById('status').textContent = 'Error: ' + e.message;
+  }
+}
+
+async function loadSummary() {
+  const s = await api('summary');
+  document.getElementById('m-total').textContent = s.total.toLocaleString();
+  document.getElementById('m-rate').textContent = s.total ? s.success_rate + '%' : '-';
+  document.getElementById('m-rate').style.color = s.success_rate >= 90 ? 'var(--green)' : s.success_rate >= 70 ? 'var(--yellow)' : 'var(--red)';
+  document.getElementById('m-rate-sub').textContent = `${s.passed} passed / ${s.failed} failed`;
+  document.getElementById('m-latency').textContent = s.avg_latency_ms ? Math.round(s.avg_latency_ms) + 'ms' : '-';
+  document.getElementById('m-models').textContent = s.models;
+  document.getElementById('m-models-sub').textContent = `${s.providers} providers`;
+  document.getElementById('m-last').textContent = s.last_run ? formatTime(s.last_run) : 'Never';
+}
+
+async function loadProviders() {
+  const data = await api('providers');
+  const labels = data.map(d => d.provider);
+  const rates = data.map(d => d.total ? Math.round((d.passed||0)/d.total*100*10)/10 : 0);
+  const colors = rates.map(r => r >= 90 ? 'rgba(16,185,129,0.7)' : r >= 70 ? 'rgba(245,158,11,0.7)' : 'rgba(239,68,68,0.7)');
+
+  if (providerChart) providerChart.destroy();
+  providerChart = new Chart(document.getElementById('chart-providers'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Success Rate %',
+        data: rates,
+        backgroundColor: colors,
+        borderRadius: 4,
+        barThickness: 30,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b', callback: v => v + '%' } },
+        y: { grid: { display: false }, ticks: { color: '#e2e8f0' } }
+      }
+    }
+  });
+}
+
+async function loadTrends() {
+  const data = await api('trends');
+  if (!data.length) {
+    if (latencyChart) latencyChart.destroy();
+    latencyChart = null;
+    return;
+  }
+
+  const providers = [...new Set(data.map(d => d.provider))];
+  const buckets = [...new Set(data.map(d => d.bucket))].sort();
+  const lookup = {};
+  data.forEach(d => { lookup[d.bucket + '|' + d.provider] = d; });
+
+  const datasets = providers.map((p, i) => ({
+    label: p,
+    data: buckets.map(b => {
+      const row = lookup[b + '|' + p];
+      return row ? Math.round(row.avg_latency || 0) : null;
+    }),
+    borderColor: COLORS[i % COLORS.length],
+    backgroundColor: COLORS[i % COLORS.length] + '33',
+    tension: 0.3,
+    pointRadius: 2,
+    spanGaps: true,
+  }));
+
+  const labels = buckets.map(b => {
+    if (b.length === 10) return b.slice(5); // date: MM-DD
+    return b.slice(11) + ':00'; // hour: HH:00
+  });
+
+  if (latencyChart) latencyChart.destroy();
+  latencyChart = new Chart(document.getElementById('chart-latency'), {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { labels: { color: '#e2e8f0', boxWidth: 12, font: { size: 11 } } },
+        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y}ms` } }
+      },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b', font: { size: 10 } } },
+        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b', callback: v => v + 'ms' } }
+      }
+    }
+  });
+}
+
+async function loadHeatmap() {
+  const data = await api('heatmap');
+  const table = document.getElementById('heatmap-table');
+
+  if (!data.length) {
+    table.innerHTML = '<thead><tr><th>Provider / Model</th></tr></thead><tbody><tr><td>No data</td></tr></tbody>';
+    return;
+  }
+
+  const testTypes = [...new Set(data.map(d => d.test_type))].sort();
+  const pmKeys = [...new Set(data.map(d => d.provider + '/' + d.model))].sort();
+  const lookup = {};
+  data.forEach(d => {
+    const key = d.provider + '/' + d.model + '|' + d.test_type;
+    lookup[key] = { rate: d.total ? Math.round((d.passed||0)/d.total*1000)/10 : 0, total: d.total, latency: d.avg_latency };
+  });
+
+  let html = '<thead><tr><th>Provider / Model</th>';
+  testTypes.forEach(t => html += `<th>${t}</th>`);
+  html += '</tr></thead><tbody>';
+
+  pmKeys.forEach(pm => {
+    html += `<tr><td>${pm}</td>`;
+    testTypes.forEach(t => {
+      const d = lookup[pm + '|' + t];
+      if (!d) {
+        html += '<td class="cell-na">-</td>';
+      } else {
+        const cls = d.rate >= 90 ? 'cell-pass' : d.rate >= 70 ? 'cell-warn' : 'cell-fail';
+        const lat = d.latency ? ` (${Math.round(d.latency)}ms)` : '';
+        html += `<td class="${cls}">${d.rate}%${lat}</td>`;
+      }
+    });
+    html += '</tr>';
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+
+async function loadResults() {
+  const data = await api('results?limit=50');
+  const tbody = document.querySelector('#results-table tbody');
+
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--muted)">No results yet</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = data.map(r => {
+    const time = r.created_at ? r.created_at.slice(0,19).replace('T',' ') : '-';
+    const status = r.success ? '<span class="badge badge-pass">PASS</span>' : '<span class="badge badge-fail">FAIL</span>';
+    const latency = r.latency_total_ms ? Math.round(r.latency_total_ms) + 'ms' : '-';
+    const ttfb = r.latency_first_token_ms ? Math.round(r.latency_first_token_ms) + 'ms' : '-';
+    const tps = r.throughput_tps ? r.throughput_tps.toFixed(1) : '-';
+    const score = r.score != null ? r.score.toFixed(2) : '-';
+    const error = r.error_type || '-';
+    return `<tr>
+      <td style="color:var(--muted);font-size:12px">${time}</td>
+      <td style="color:var(--cyan)">${r.provider}</td>
+      <td>${r.model}</td>
+      <td style="color:var(--purple)">${r.test_type}</td>
+      <td>${status}</td>
+      <td style="color:var(--yellow)">${latency}</td>
+      <td style="color:var(--yellow)">${ttfb}</td>
+      <td>${tps}</td>
+      <td>${score}</td>
+      <td style="color:var(--red);font-size:12px">${error}</td>
+    </tr>`;
+  }).join('');
+}
+
+function formatTime(iso) {
+  if (!iso) return '-';
+  const d = new Date(iso);
+  const now = new Date();
+  const diff = (now - d) / 1000;
+  if (diff < 60) return Math.round(diff) + 's ago';
+  if (diff < 3600) return Math.round(diff/60) + 'm ago';
+  if (diff < 86400) return Math.round(diff/3600) + 'h ago';
+  return d.toLocaleDateString();
+}
+
+// Auto refresh every 60s
+refresh();
+setInterval(refresh, 60000);
+</script>
+</body>
+</html>

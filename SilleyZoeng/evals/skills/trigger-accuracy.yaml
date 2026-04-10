@@ -1,0 +1,321 @@
+description: "Skill Trigger Accuracy — tests whether the correct skill activates for each user message"
+
+providers:
+  - id: "file://src/providers/claude-skill.provider.ts"
+    label: "claude-skill-trigger"
+    config:
+      mode: trigger
+
+defaultTest:
+  assert:
+    - type: "file://src/assertions/trigger-accuracy.ts"
+
+tests:
+  # === deploy skill (8 cases) ===
+  - description: "deploy: '帮我部署一下前端'"
+    vars:
+      prompt: "帮我部署一下前端"
+      expected_skill: "deploy"
+      should_trigger: "true"
+  - description: "deploy: 'deploy the latest changes'"
+    vars:
+      prompt: "deploy the latest changes"
+      expected_skill: "deploy"
+      should_trigger: "true"
+  - description: "deploy: '发布到服务器'"
+    vars:
+      prompt: "发布到服务器"
+      expected_skill: "deploy"
+      should_trigger: "true"
+  - description: "deploy: '推送并部署'"
+    vars:
+      prompt: "推送并部署"
+      expected_skill: "deploy"
+      should_trigger: "true"
+  - description: "deploy: 'redeploy the rust backend'"
+    vars:
+      prompt: "redeploy the rust backend"
+      expected_skill: "deploy"
+      should_trigger: "true"
+  - description: "deploy: '更新服务器上的代码'"
+    vars:
+      prompt: "更新服务器上的代码"
+      expected_skill: "deploy"
+      should_trigger: "true"
+  - description: "deploy: '上线新版本'"
+    vars:
+      prompt: "上线新版本"
+      expected_skill: "deploy"
+      should_trigger: "true"
+  - description: "deploy: '重新部署billing服务'"
+    vars:
+      prompt: "重新部署billing服务"
+      expected_skill: "deploy"
+      should_trigger: "true"
+
+  # === ops-report skill (8 cases) ===
+  - description: "ops-report: '给我看看今天的运营数据'"
+    vars:
+      prompt: "给我看看今天的运营数据"
+      expected_skill: "ops-report"
+      should_trigger: "true"
+  - description: "ops-report: 'show me the daily ops report'"
+    vars:
+      prompt: "show me the daily ops report"
+      expected_skill: "ops-report"
+      should_trigger: "true"
+  - description: "ops-report: '最近几天的情况怎么样'"
+    vars:
+      prompt: "最近几天的情况怎么样"
+      expected_skill: "ops-report"
+      should_trigger: "true"
+  - description: "ops-report: '用户增长怎么样'"
+    vars:
+      prompt: "用户增长怎么样"
+      expected_skill: "ops-report"
+      should_trigger: "true"
+  - description: "ops-report: '收入多少'"
+    vars:
+      prompt: "收入多少"
+      expected_skill: "ops-report"
+      should_trigger: "true"
+  - description: "ops-report: '查看注册用户数和充值数据'"
+    vars:
+      prompt: "查看注册用户数和充值数据"
+      expected_skill: "ops-report"
+      should_trigger: "true"
+  - description: "ops-report: 'API成本和token消耗情况'"
+    vars:
+      prompt: "API成本和token消耗情况"
+      expected_skill: "ops-report"
+      should_trigger: "true"
+  - description: "ops-report: '留存率报表'"
+    vars:
+      prompt: "留存率报表"
+      expected_skill: "ops-report"
+      should_trigger: "true"
+
+  # === ssh-prod skill (6 cases) ===
+  - description: "ssh-prod: '登录prod服务器看看'"
+    vars:
+      prompt: "登录prod服务器看看"
+      expected_skill: "ssh-prod"
+      should_trigger: "true"
+  - description: "ssh-prod: 'ssh prod and check disk usage'"
+    vars:
+      prompt: "ssh prod and check disk usage"
+      expected_skill: "ssh-prod"
+      should_trigger: "true"
+  - description: "ssh-prod: '在prod上执行 df -h'"
+    vars:
+      prompt: "在prod上执行 df -h"
+      expected_skill: "ssh-prod"
+      should_trigger: "true"
+  - description: "ssh-prod: 'check prod server status'"
+    vars:
+      prompt: "check prod server status"
+      expected_skill: "ssh-prod"
+      should_trigger: "true"
+  - description: "ssh-prod: 'prod服务器上运行一下这个命令'"
+    vars:
+      prompt: "prod服务器上运行一下这个命令"
+      expected_skill: "ssh-prod"
+      should_trigger: "true"
+  - description: "ssh-prod: 'prod上看看日志'"
+    vars:
+      prompt: "prod上看看日志"
+      expected_skill: "ssh-prod"
+      should_trigger: "true"
+
+  # === log-patrol skill (8 cases) ===
+  - description: "log-patrol: '查日志看看有没有报错'"
+    vars:
+      prompt: "查日志看看有没有报错"
+      expected_skill: "log-patrol"
+      should_trigger: "true"
+  - description: "log-patrol: 'generate an error report for prod'"
+    vars:
+      prompt: "generate an error report for prod"
+      expected_skill: "log-patrol"
+      should_trigger: "true"
+  - description: "log-patrol: '日志巡检'"
+    vars:
+      prompt: "日志巡检"
+      expected_skill: "log-patrol"
+      should_trigger: "true"
+  - description: "log-patrol: '查看所有模块的报错'"
+    vars:
+      prompt: "查看所有模块的报错"
+      expected_skill: "log-patrol"
+      should_trigger: "true"
+  - description: "log-patrol: '服务报错情况'"
+    vars:
+      prompt: "服务报错情况"
+      expected_skill: "log-patrol"
+      should_trigger: "true"
+  - description: "log-patrol: 'check prod error logs'"
+    vars:
+      prompt: "check prod error logs"
+      expected_skill: "log-patrol"
+      should_trigger: "true"
+  - description: "log-patrol: 'prod日志报告'"
+    vars:
+      prompt: "prod日志报告"
+      expected_skill: "log-patrol"
+      should_trigger: "true"
+  - description: "log-patrol: '有没有报错'"
+    vars:
+      prompt: "有没有报错"
+      expected_skill: "log-patrol"
+      should_trigger: "true"
+
+  # === integrator-patrol skill (8 cases) ===
+  - description: "integrator-patrol: '巡检一下服务'"
+    vars:
+      prompt: "巡检一下服务"
+      expected_skill: "integrator-patrol"
+      should_trigger: "true"
+  - description: "integrator-patrol: 'run integration health check'"
+    vars:
+      prompt: "run integration health check"
+      expected_skill: "integrator-patrol"
+      should_trigger: "true"
+  - description: "integrator-patrol: '检查服务状态'"
+    vars:
+      prompt: "检查服务状态"
+      expected_skill: "integrator-patrol"
+      should_trigger: "true"
+  - description: "integrator-patrol: 'smoke test the services'"
+    vars:
+      prompt: "smoke test the services"
+      expected_skill: "integrator-patrol"
+      should_trigger: "true"
+  - description: "integrator-patrol: '登录服务器看看服务跑得怎么样'"
+    vars:
+      prompt: "登录服务器看看服务跑得怎么样"
+      expected_skill: "integrator-patrol"
+      should_trigger: "true"
+  - description: "integrator-patrol: 'act as integrator agent'"
+    vars:
+      prompt: "act as integrator agent and check services"
+      expected_skill: "integrator-patrol"
+      should_trigger: "true"
+  - description: "integrator-patrol: 'patrol the dev environment'"
+    vars:
+      prompt: "patrol the dev environment"
+      expected_skill: "integrator-patrol"
+      should_trigger: "true"
+  - description: "integrator-patrol: '服务状态怎么样'"
+    vars:
+      prompt: "服务状态怎么样"
+      expected_skill: "integrator-patrol"
+      should_trigger: "true"
+
+  # === self-improving skill (6 cases) ===
+  - description: "self-improving: 'I made a mistake'"
+    vars:
+      prompt: "I made a mistake, let me fix that"
+      expected_skill: "self-improving"
+      should_trigger: "true"
+  - description: "self-improving: '不对，应该用另一种方法'"
+    vars:
+      prompt: "不对，应该用另一种方法"
+      expected_skill: "self-improving"
+      should_trigger: "true"
+  - description: "self-improving: 'you're wrong about this API'"
+    vars:
+      prompt: "you're wrong about this API, it changed in v2"
+      expected_skill: "self-improving"
+      should_trigger: "true"
+  - description: "self-improving: '记住我的偏好'"
+    vars:
+      prompt: "记住我的偏好，以后都用这种方式"
+      expected_skill: "self-improving"
+      should_trigger: "true"
+  - description: "self-improving: 'stop doing X'"
+    vars:
+      prompt: "stop doing X, I told you before"
+      expected_skill: "self-improving"
+      should_trigger: "true"
+  - description: "self-improving: 'this command failed'"
+    vars:
+      prompt: "this command failed, let me try another approach"
+      expected_skill: "self-improving"
+      should_trigger: "true"
+
+  # === Negative cases (15 - should NOT trigger any skill) ===
+  - description: "negative: weather question"
+    vars:
+      prompt: "What is the weather today in Shanghai?"
+      expected_skill: "none"
+      should_trigger: "false"
+  - description: "negative: Python script"
+    vars:
+      prompt: "帮我写一个Python脚本来处理CSV文件"
+      expected_skill: "none"
+      should_trigger: "false"
+  - description: "negative: Docker explanation"
+    vars:
+      prompt: "Explain how Docker networking works"
+      expected_skill: "none"
+      should_trigger: "false"
+  - description: "negative: refactor function"
+    vars:
+      prompt: "帮我重构这个函数"
+      expected_skill: "none"
+      should_trigger: "false"
+  - description: "negative: REST vs GraphQL"
+    vars:
+      prompt: "What is the difference between REST and GraphQL?"
+      expected_skill: "none"
+      should_trigger: "false"
+  - description: "negative: code review"
+    vars:
+      prompt: "帮我review一下这段代码"
+      expected_skill: "none"
+      should_trigger: "false"
+  - description: "negative: React component"
+    vars:
+      prompt: "Create a React component for user profile"
+      expected_skill: "none"
+      should_trigger: "false"
+  - description: "negative: error explanation"
+    vars:
+      prompt: "解释一下这个错误是什么意思"
+      expected_skill: "none"
+      should_trigger: "false"
+  - description: "negative: PostgreSQL setup"
+    vars:
+      prompt: "How do I set up a PostgreSQL database?"
+      expected_skill: "none"
+      should_trigger: "false"
+  - description: "negative: unit test"
+    vars:
+      prompt: "帮我写个单元测试"
+      expected_skill: "none"
+      should_trigger: "false"
+  - description: "negative: algorithm question"
+    vars:
+      prompt: "What is the time complexity of quicksort?"
+      expected_skill: "none"
+      should_trigger: "false"
+  - description: "negative: translation"
+    vars:
+      prompt: "翻译这段英文"
+      expected_skill: "none"
+      should_trigger: "false"
+  - description: "negative: git commit"
+    vars:
+      prompt: "帮我git commit这些变更"
+      expected_skill: "none"
+      should_trigger: "false"
+  - description: "negative: Fix typo"
+    vars:
+      prompt: "Fix the typo in README.md"
+      expected_skill: "none"
+      should_trigger: "false"
+  - description: "negative: add gitignore"
+    vars:
+      prompt: "Add a .gitignore file to this project"
+      expected_skill: "none"
+      should_trigger: "false"

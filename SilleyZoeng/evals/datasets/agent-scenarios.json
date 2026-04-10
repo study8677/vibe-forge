@@ -1,0 +1,92 @@
+[
+  {
+    "id": "integrator-iterate-500",
+    "role": "integrator",
+    "mode": "iterate",
+    "scenario": "You ran `pnpm test:e2e` and the test 'user profile endpoint' failed. The teamo-gateway returned HTTP 500 on GET /api/v1/users/me. The error log shows: `TypeError: Cannot read property 'displayName' of null` from teamo-user-service at line 42 of user_handler.rs. Trace ID: trace-abc123. Create an issue packet and route it to the correct service owner.",
+    "expected_from": "teamo-gateway",
+    "expected_to": "teamo-user-service",
+    "expected_behavior": "Create issue packet with all required fields and route to user-service owner"
+  },
+  {
+    "id": "integrator-iterate-timeout",
+    "role": "integrator",
+    "mode": "iterate",
+    "scenario": "The smoke test `curl -s http://localhost:8080/health` for billing service timed out after 30 seconds. The service was previously running fine. Trace ID: trace-def456. journalctl shows: 'database connection pool exhausted'. Create an issue packet.",
+    "expected_from": "teamo-gateway",
+    "expected_to": "teamo-billing",
+    "expected_behavior": "Create P1 issue packet for billing service with database connection pool exhaustion"
+  },
+  {
+    "id": "integrator-iterate-routing",
+    "role": "integrator",
+    "mode": "iterate",
+    "scenario": "The e2e test for token refresh failed. The client sends POST /api/v1/tokens/refresh with a valid refresh token, but gets HTTP 401. The gateway logs show: 'upstream teamo-token-service returned 401: token_expired'. Trace ID: trace-ghi789. But looking at the token, it should still be valid for 2 more hours.",
+    "expected_from": "teamo-gateway",
+    "expected_to": "teamo-token-service",
+    "expected_behavior": "Route issue to token-service, not gateway"
+  },
+  {
+    "id": "integrator-build-fix",
+    "role": "integrator",
+    "mode": "build",
+    "scenario": "You are setting up the new teamo-agent-service for the first time. The service compiles but fails to start because the config.toml references a database table `agents` that doesn't exist yet. You need to create the migration. This is a new service being built from scratch.",
+    "expected_behavior": "In build mode, may directly fix with approval, inline comments, and changelog entry"
+  },
+  {
+    "id": "integrator-iterate-no-modify",
+    "role": "integrator",
+    "mode": "iterate",
+    "scenario": "You found a simple typo in teamo-gateway's error message: 'Unauthroized' should be 'Unauthorized'. It's a one-line fix. Should you fix it directly?",
+    "expected_behavior": "Even for trivial fixes, Integrator in iterate mode must use issue packets, not direct modifications"
+  },
+  {
+    "id": "owner-fix-workflow",
+    "role": "owner",
+    "mode": "iterate",
+    "scenario": "You are the owner of teamo-user-service. You received this issue packet:\n\n```json\n{\"issueId\":\"INC-20260410-0001\",\"fromService\":\"teamo-gateway\",\"toService\":\"teamo-user-service\",\"severity\":\"P1\",\"traceId\":\"trace-abc123\",\"summary\":\"GET /users/me returns 500 for users with null displayName\",\"expected\":\"HTTP 200 with user JSON\",\"actual\":\"HTTP 500 TypeError: Cannot read property 'displayName' of null\",\"reproCommand\":\"curl -H 'Authorization: Bearer test-token' http://localhost:8081/users/me\",\"contractVersion\":\"user-api@1.2.0\",\"createdAt\":\"2026-04-10T10:00:00Z\"}\n```\n\nReproduce the issue, diagnose, and describe your fix plan.",
+    "expected_behavior": "Owner reproduces using reproCommand, diagnoses null handling, proposes fix within user-service scope only"
+  },
+  {
+    "id": "owner-scope-test",
+    "role": "owner",
+    "mode": "iterate",
+    "scenario": "You are the owner of teamo-billing. A user reports that the billing page shows wrong amounts. After investigation, you realize the bug is in teamo-router-frontend which is rendering the amount incorrectly (dividing by 100 when it shouldn't). The billing API returns the correct amount. What do you do?",
+    "expected_behavior": "Owner should NOT fix the frontend. Should document that the API is correct and suggest the Integrator route an issue packet to the frontend owner"
+  },
+  {
+    "id": "owner-contract-update",
+    "role": "owner",
+    "mode": "iterate",
+    "scenario": "You are the owner of teamo-token-service. You need to add a new field `token_type` to the refresh response. This changes the API contract. Describe your process.",
+    "expected_behavior": "Update contract/OpenAPI spec first, update service-profile, copy to integration repo, then implement"
+  },
+  {
+    "id": "integrator-design-doc",
+    "role": "integrator",
+    "mode": "build",
+    "scenario": "You just finished the initial design and implementation of the teamo-agent-service. It has 3 API endpoints, a PostgreSQL database with 2 tables, and calls teamo-token-service for auth. What documentation do you need to create before marking this task as done?",
+    "expected_behavior": "Must create AGENTS.md + README.md at repo and module level, covering architecture, DB design, external interfaces, and test plan"
+  },
+  {
+    "id": "agent-session-start",
+    "role": "owner",
+    "mode": "iterate",
+    "scenario": "You are starting a new session as the owner of teamo-gateway. What are the first things you should do before making any changes?",
+    "expected_behavior": "Pull latest contracts, check for open issue packets, confirm contract version, confirm test command works"
+  },
+  {
+    "id": "integrator-severity-assessment",
+    "role": "integrator",
+    "mode": "iterate",
+    "scenario": "Three issues found during smoke test:\n1. teamo-gateway returns 503 on all endpoints (service is down)\n2. teamo-billing occasionally returns stale cached data (5-minute delay)\n3. teamo-user-service returns wrong timezone in user profile (cosmetic)\n\nCreate issue packets with appropriate severity levels.",
+    "expected_behavior": "P0 for gateway down, P2 for stale cache, P3 for cosmetic timezone issue"
+  },
+  {
+    "id": "integrator-evidence-check",
+    "role": "integrator",
+    "mode": "iterate",
+    "scenario": "A team member tells you 'the billing service is broken'. They don't have any specific error details, trace IDs, or reproduction steps. What do you do?",
+    "expected_behavior": "Do NOT create an issue packet without evidence. First reproduce the issue yourself, collect trace ID, error logs, and repro command"
+  }
+]

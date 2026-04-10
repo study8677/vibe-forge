@@ -1,0 +1,30 @@
+{
+  "name": "skill-agent-eval-platform",
+  "version": "1.0.0",
+  "description": "Skill & Agent evaluation platform using Harbor + promptfoo",
+  "type": "module",
+  "scripts": {
+    "eval": "promptfoo eval -c promptfooconfig.yaml",
+    "eval:skills": "promptfoo eval -c evals/skills/trigger-accuracy.yaml && promptfoo eval -c evals/skills/protocol-compliance.yaml && promptfoo eval -c evals/skills/safety.yaml",
+    "eval:agents": "promptfoo eval -c evals/agents/integrator-compliance.yaml && promptfoo eval -c evals/agents/owner-compliance.yaml && promptfoo eval -c evals/agents/mode-adherence.yaml",
+    "eval:trigger": "promptfoo eval -c evals/skills/trigger-accuracy.yaml",
+    "eval:safety": "promptfoo eval -c evals/skills/safety.yaml",
+    "eval:protocol": "promptfoo eval -c evals/skills/protocol-compliance.yaml",
+    "view": "promptfoo view",
+    "setup": "bash scripts/setup.sh",
+    "scan-skills": "tsx scripts/scan-skills.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "dotenv": "^16.4.7",
+    "gray-matter": "^4.0.3",
+    "promptfoo": "^0.107.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "@types/node": "^22.10.0"
+  }
+}

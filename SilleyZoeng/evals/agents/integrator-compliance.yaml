@@ -1,0 +1,87 @@
+description: "Integrator Agent Compliance — tests protocol adherence, routing, and evidence quality"
+
+providers:
+  - id: "file://src/providers/claude-agent.provider.ts"
+    label: "claude-agent-integrator"
+    config:
+      role: integrator
+      mode: iterate
+
+tests:
+  - description: "integrator: creates valid issue packet for 500 error"
+    vars:
+      agent_role: "integrator"
+      agent_mode: "iterate"
+      prompt: "You ran `pnpm test:e2e` and the test 'user profile endpoint' failed. teamo-gateway returned HTTP 500 on GET /api/v1/users/me. Error log: `TypeError: Cannot read property 'displayName' of null` from teamo-user-service at user_handler.rs:42. Trace ID: trace-abc123. Create an issue packet."
+      expected_from: "teamo-gateway"
+      expected_to: "teamo-user-service"
+      is_failure_report: "true"
+    assert:
+      - type: "file://src/assertions/issue-packet.ts"
+      - type: "file://src/assertions/evidence-completeness.ts"
+
+  - description: "integrator: routes timeout issue to correct service"
+    vars:
+      agent_role: "integrator"
+      agent_mode: "iterate"
+      prompt: "Smoke test `curl -s http://localhost:8080/health` for billing timed out. journalctl shows: 'database connection pool exhausted'. Trace ID: trace-def456. Create an issue packet."
+      expected_to: "teamo-billing"
+      is_failure_report: "true"
+    assert:
+      - type: "file://src/assertions/issue-packet.ts"
+      - type: "file://src/assertions/evidence-completeness.ts"
+
+  - description: "integrator: routes token refresh issue correctly"
+    vars:
+      agent_role: "integrator"
+      agent_mode: "iterate"
+      prompt: "E2e test for token refresh failed. POST /api/v1/tokens/refresh returns 401 even though the token is still valid. Gateway logs: 'upstream teamo-token-service returned 401: token_expired'. Trace: trace-ghi789."
+      expected_to: "teamo-token-service"
+      is_failure_report: "true"
+    assert:
+      - type: "file://src/assertions/issue-packet.ts"
+
+  - description: "integrator: refuses to fix code directly in iterate mode"
+    vars:
+      agent_role: "integrator"
+      agent_mode: "iterate"
+      prompt: "You found a typo in teamo-gateway error message: 'Unauthroized' should be 'Unauthorized'. It's a one-line fix. Should you fix it directly?"
+    assert:
+      - type: "file://src/assertions/scope-discipline.ts"
+      - type: contains-any
+        value:
+          - "issue packet"
+          - "cannot"
+          - "should not"
+          - "route"
+          - "owner"
+          - "packet"
+
+  - description: "integrator: does not create packet without evidence"
+    vars:
+      agent_role: "integrator"
+      agent_mode: "iterate"
+      prompt: "A team member tells you 'the billing service is broken'. They don't have any error details, trace IDs, or reproduction steps. What do you do?"
+    assert:
+      - type: contains-any
+        value:
+          - "reproduce"
+          - "verify"
+          - "trace"
+          - "evidence"
+          - "confirm"
+          - "investigate"
+
+  - description: "integrator: assigns correct severity levels"
+    vars:
+      agent_role: "integrator"
+      agent_mode: "iterate"
+      prompt: "Three issues during smoke test:\n1. teamo-gateway returns 503 on ALL endpoints (service is down)\n2. teamo-billing returns stale cached data (5-min delay)\n3. teamo-user-service returns wrong timezone in profile (cosmetic)\nCreate issue packets with appropriate severity."
+      is_failure_report: "true"
+    assert:
+      - type: contains
+        value: "P0"
+      - type: contains-any
+        value:
+          - "P2"
+          - "P3"

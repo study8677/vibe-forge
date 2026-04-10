@@ -26,6 +26,7 @@ Vibe Coding 项目合集 — 每个目录均由 **50 字以内的提示词** 一
 | `otron` | OTron 远程连接工具 | 用electron搭建一个远程连接工具，需要拥有管理连接、连接导入导出、文件上传下载文件功能。 | Claude Opus 4.6 | Electron + xterm.js + ssh2 |
 | `media-station` | 局域网媒体站 | 开发一个轻量高效局域网媒体应用，类似群晖Photo/Video Station。支持千万级文件，高性能数据库，照片自动生成缩略图。 | Claude Opus 4.6 | Rust / Axum / SQLite / Vanilla JS |
 | `kevin001` | Travelport统一网关 | 统一网关支持Travelport SOAP/XML与JSON多账号凭证按操作路由协议入参/出参标准化 | Claude Opus 4.6 | Python / FastAPI / Pydantic / httpx / lxml |
+| `SilleyZoeng` | Skill & Agent 评估平台 | 使用Harbor + promptfoo技术栈实现一个skill、agent的评估平台，skill、agent均在本地，有现成的harness框架和skill | Claude Opus 4.6 | Harbor + promptfoo + TypeScript + Docker |
 
 ### TechnologyStar 提示词
 

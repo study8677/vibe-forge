@@ -1,0 +1,155 @@
+description: "Skill Protocol Compliance — tests whether the model follows each skill's step-by-step instructions"
+
+providers:
+  - id: "file://src/providers/claude-skill.provider.ts"
+    label: "claude-skill-protocol"
+    config:
+      mode: protocol
+
+tests:
+  # === deploy skill protocol ===
+  - description: "deploy: identifies correct deploy line for frontend changes"
+    vars:
+      target_skill: "deploy"
+      prompt: "I changed files in frontend/teamo-router-frontend/src/. Please deploy."
+    assert:
+      - type: "file://src/assertions/protocol-compliance.ts"
+        config:
+          is_failure_report: "false"
+      - type: contains-any
+        value:
+          - "Frontend"
+          - "frontend"
+          - "Next.js"
+          - "deploy_router_dev"
+      - type: contains-any
+        value:
+          - "git status"
+          - "git diff"
+
+  - description: "deploy: identifies correct deploy line for Rust backend"
+    vars:
+      target_skill: "deploy"
+      prompt: "I changed code in teamo-token-service/src/main.rs and teamo-gateway/src/handler.rs. Deploy these changes."
+    assert:
+      - type: contains-any
+        value:
+          - "Rust"
+          - "rust"
+          - "deploy_rust_atomic"
+      - type: contains-any
+        value:
+          - "git status"
+          - "git diff"
+
+  - description: "deploy: confirms with user before deploying"
+    vars:
+      target_skill: "deploy"
+      prompt: "Deploy the billing backend immediately."
+    assert:
+      - type: contains-any
+        value:
+          - "confirm"
+          - "proceed"
+          - "确认"
+
+  - description: "deploy: follows backend-first order for multi-line deploy"
+    vars:
+      target_skill: "deploy"
+      prompt: "I changed both the Go billing backend and the frontend. Deploy everything."
+    assert:
+      - type: llm-rubric
+        value: "The response should indicate deploying backend services before frontend. Backend (Go/Rust) deploys should be mentioned before frontend deploy."
+
+  # === ops-report skill protocol ===
+  - description: "ops-report: generates structured report with required sections"
+    vars:
+      target_skill: "ops-report"
+      prompt: "给我看看过去3天的运营数据"
+    assert:
+      - type: contains-any
+        value:
+          - "用户增长"
+          - "User Growth"
+          - "注册"
+      - type: contains-any
+        value:
+          - "DAU"
+          - "活跃"
+      - type: contains-any
+        value:
+          - "留存"
+          - "Retention"
+
+  - description: "ops-report: uses correct registration time field"
+    vars:
+      target_skill: "ops-report"
+      prompt: "查看今日新增注册用户"
+    assert:
+      - type: contains-any
+        value:
+          - "register_time"
+          - "teamo_auth"
+          - "users"
+      - type: not-contains
+        value: "wallet.updated_at"
+
+  # === integrator-patrol skill protocol ===
+  - description: "integrator-patrol: follows step-by-step patrol process"
+    vars:
+      target_skill: "integrator-patrol"
+      prompt: "巡检一下dev环境的所有服务"
+    assert:
+      - type: contains-any
+        value:
+          - "service"
+          - "status"
+          - "服务"
+      - type: contains-any
+        value:
+          - "log"
+          - "error"
+          - "日志"
+
+  - description: "integrator-patrol: reads protocol before acting"
+    vars:
+      target_skill: "integrator-patrol"
+      prompt: "Run a full integration health check as the Integrator agent."
+    assert:
+      - type: contains-any
+        value:
+          - "protocol"
+          - "how-to-work-together"
+          - "AGENTS.md"
+          - "agent-protocol"
+
+  # === log-patrol skill protocol ===
+  - description: "log-patrol: checks all service modules"
+    vars:
+      target_skill: "log-patrol"
+      prompt: "扫描prod所有服务的错误日志"
+    assert:
+      - type: contains-any
+        value:
+          - "gateway"
+          - "billing"
+          - "token"
+          - "user-service"
+      - type: contains-any
+        value:
+          - "journalctl"
+          - "systemctl"
+          - "error"
+
+  - description: "log-patrol: classifies severity correctly"
+    vars:
+      target_skill: "log-patrol"
+      prompt: "Generate error log report for all services"
+    assert:
+      - type: contains-any
+        value:
+          - "severity"
+          - "high"
+          - "medium"
+          - "low"
+          - "Severity"

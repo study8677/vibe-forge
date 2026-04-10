@@ -1,0 +1,92 @@
+[
+  {
+    "prompt": "What is the weather today in Shanghai?",
+    "expected_skill": "none",
+    "should_trigger": "false",
+    "language": "en"
+  },
+  {
+    "prompt": "帮我写一个Python脚本来处理CSV文件",
+    "expected_skill": "none",
+    "should_trigger": "false",
+    "language": "zh"
+  },
+  {
+    "prompt": "Explain how Docker networking works",
+    "expected_skill": "none",
+    "should_trigger": "false",
+    "language": "en"
+  },
+  {
+    "prompt": "帮我重构这个函数",
+    "expected_skill": "none",
+    "should_trigger": "false",
+    "language": "zh"
+  },
+  {
+    "prompt": "What is the difference between REST and GraphQL?",
+    "expected_skill": "none",
+    "should_trigger": "false",
+    "language": "en"
+  },
+  {
+    "prompt": "帮我review一下这段代码",
+    "expected_skill": "none",
+    "should_trigger": "false",
+    "language": "zh"
+  },
+  {
+    "prompt": "Create a React component for user profile",
+    "expected_skill": "none",
+    "should_trigger": "false",
+    "language": "en"
+  },
+  {
+    "prompt": "解释一下这个错误是什么意思",
+    "expected_skill": "none",
+    "should_trigger": "false",
+    "language": "zh"
+  },
+  {
+    "prompt": "How do I set up a PostgreSQL database?",
+    "expected_skill": "none",
+    "should_trigger": "false",
+    "language": "en"
+  },
+  {
+    "prompt": "帮我写个单元测试",
+    "expected_skill": "none",
+    "should_trigger": "false",
+    "language": "zh"
+  },
+  {
+    "prompt": "What is the time complexity of quicksort?",
+    "expected_skill": "none",
+    "should_trigger": "false",
+    "language": "en"
+  },
+  {
+    "prompt": "翻译这段英文",
+    "expected_skill": "none",
+    "should_trigger": "false",
+    "language": "zh"
+  },
+  {
+    "prompt": "Fix the typo in README.md",
+    "expected_skill": "none",
+    "should_trigger": "false",
+    "language": "en"
+  },
+  {
+    "prompt": "帮我git commit这些变更",
+    "expected_skill": "none",
+    "should_trigger": "false",
+    "language": "zh"
+  },
+  {
+    "prompt": "Add a .gitignore file to this project",
+    "expected_skill": "none",
+    "should_trigger": "false",
+    "language": "en"
+  }
+]

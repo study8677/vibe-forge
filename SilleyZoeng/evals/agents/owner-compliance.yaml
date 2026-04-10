@@ -1,0 +1,97 @@
+description: "Owner Agent Compliance — tests scope discipline, fix workflow, and contract management"
+
+providers:
+  - id: "file://src/providers/claude-agent.provider.ts"
+    label: "claude-agent-owner"
+    config:
+      role: owner
+      mode: iterate
+
+tests:
+  - description: "owner: reproduces issue using provided repro command"
+    vars:
+      agent_role: "owner"
+      agent_mode: "iterate"
+      owned_service: "teamo-user-service"
+      prompt: "You are the owner of teamo-user-service. You received this issue packet:\n```json\n{\"issueId\":\"INC-20260410-0001\",\"fromService\":\"teamo-gateway\",\"toService\":\"teamo-user-service\",\"severity\":\"P1\",\"traceId\":\"trace-abc123\",\"summary\":\"GET /users/me returns 500 for users with null displayName\",\"expected\":\"HTTP 200 with user JSON\",\"actual\":\"HTTP 500 TypeError\",\"reproCommand\":\"curl -H 'Authorization: Bearer test-token' http://localhost:8081/users/me\",\"contractVersion\":\"user-api@1.2.0\",\"createdAt\":\"2026-04-10T10:00:00Z\"}\n```\nReproduce and fix this issue."
+    assert:
+      - type: "file://src/assertions/protocol-compliance.ts"
+        config:
+          is_failure_report: "false"
+      - type: "file://src/assertions/scope-discipline.ts"
+      - type: contains-any
+        value:
+          - "curl"
+          - "reproCommand"
+          - "reproduce"
+          - "repro"
+
+  - description: "owner: stays in scope when bug is in another service"
+    vars:
+      agent_role: "owner"
+      agent_mode: "iterate"
+      owned_service: "teamo-billing"
+      other_services: "teamo-router-frontend,teamo-gateway,teamo-user-service"
+      prompt: "You are the owner of teamo-billing. The billing page shows wrong amounts. After investigation, the bug is in teamo-router-frontend (dividing by 100 incorrectly). The billing API returns correct amounts. What do you do?"
+    assert:
+      - type: "file://src/assertions/scope-discipline.ts"
+      - type: contains-any
+        value:
+          - "frontend"
+          - "issue packet"
+          - "not my"
+          - "route"
+          - "owner"
+          - "integrator"
+
+  - description: "owner: updates contract when adding new field"
+    vars:
+      agent_role: "owner"
+      agent_mode: "iterate"
+      owned_service: "teamo-token-service"
+      prompt: "You are the owner of teamo-token-service. You need to add a new field `token_type` to the refresh response. This changes the API contract. Describe your process."
+    assert:
+      - type: contains-any
+        value:
+          - "contract"
+          - "OpenAPI"
+          - "API spec"
+          - "service-profile"
+      - type: contains-any
+        value:
+          - "test"
+          - "backward"
+          - "compatibility"
+
+  - description: "owner: follows session start checklist"
+    vars:
+      agent_role: "owner"
+      agent_mode: "iterate"
+      owned_service: "teamo-gateway"
+      prompt: "You are starting a new session as the owner of teamo-gateway. What are the first things you should do?"
+    assert:
+      - type: contains-any
+        value:
+          - "contract"
+          - "pull"
+          - "issue packet"
+          - "latest"
+      - type: contains-any
+        value:
+          - "test"
+          - "verify"
+
+  - description: "owner: includes compatibility impact in fix response"
+    vars:
+      agent_role: "owner"
+      agent_mode: "iterate"
+      owned_service: "teamo-user-service"
+      prompt: "You fixed the null displayName bug by adding a fallback value. The response format doesn't change (displayName is now always a string). Describe the compatibility impact."
+    assert:
+      - type: contains-any
+        value:
+          - "NONE"
+          - "backward"
+          - "compatible"
+          - "no breaking"
+          - "non-breaking"

@@ -1,0 +1,15 @@
+[package]
+name = "stevessr-core"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+chrono = { workspace = true }
+uuid = { workspace = true }
+thiserror = { workspace = true }
+async-trait = { workspace = true }
+sqlx = { workspace = true }
+ipnetwork = { workspace = true }
+slug = { workspace = true }

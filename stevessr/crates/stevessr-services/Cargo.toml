@@ -1,0 +1,43 @@
+[package]
+name = "stevessr-services"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+stevessr-core = { workspace = true }
+stevessr-db = { workspace = true }
+stevessr-markdown = { workspace = true }
+stevessr-plugin-api = { workspace = true }
+stevessr-cache = { workspace = true }
+sqlx = { workspace = true }
+redis = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+chrono = { workspace = true }
+uuid = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+tracing = { workspace = true }
+argon2 = { workspace = true }
+jsonwebtoken = { workspace = true }
+oauth2 = { workspace = true }
+rand = { workspace = true }
+sha2 = { workspace = true }
+hmac = { workspace = true }
+hex = { workspace = true }
+lettre = { workspace = true }
+mail-parser = { workspace = true }
+tantivy = { workspace = true }
+url = { workspace = true }
+regex = { workspace = true }
+tokio = { workspace = true }
+slug = { workspace = true }
+ipnetwork = { workspace = true }
+base64 = { workspace = true }
+base32 = { workspace = true }
+sha1 = { workspace = true }
+urlencoding = { workspace = true }
+md5 = { workspace = true }
+reqwest = { workspace = true }
+flate2 = { workspace = true }

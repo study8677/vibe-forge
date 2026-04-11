@@ -1,0 +1,25 @@
+[package]
+name = "stevessr-server"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "stevessr"
+path = "src/main.rs"
+
+[dependencies]
+stevessr-core = { workspace = true }
+stevessr-db = { workspace = true }
+stevessr-services = { workspace = true }
+stevessr-plugin-host = { workspace = true }
+stevessr-api = { workspace = true }
+stevessr-jobs = { workspace = true }
+stevessr-cache = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+config = { workspace = true }
+sqlx = { workspace = true }
+redis = { workspace = true }
+anyhow = { workspace = true }
+axum = { workspace = true }

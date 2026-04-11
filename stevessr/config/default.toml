@@ -1,0 +1,59 @@
+[server]
+bind = "0.0.0.0:3000"
+workers = 0  # 0 = num_cpus
+
+[database]
+url = "postgres://stevessr:stevessr@localhost:5432/stevessr"
+max_connections = 20
+min_connections = 5
+connect_timeout_secs = 10
+idle_timeout_secs = 300
+
+[redis]
+url = "redis://localhost:6379"
+pool_size = 10
+
+[auth]
+session_token_length = 32
+session_ttl_days = 60
+password_min_length = 10
+max_login_attempts = 5
+login_lockout_minutes = 10
+
+[uploads]
+max_file_size_mb = 10
+max_image_size_mb = 5
+allowed_extensions = ["jpg", "jpeg", "png", "gif", "webp", "svg", "pdf", "zip", "mp4", "mp3"]
+storage = "local"  # "local" or "s3"
+local_path = "./uploads"
+
+[uploads.s3]
+bucket = ""
+region = ""
+access_key = ""
+secret_key = ""
+endpoint = ""
+
+[email]
+enabled = false
+from = "noreply@example.com"
+
+[email.smtp]
+host = "localhost"
+port = 25
+username = ""
+password = ""
+tls = false
+
+[search]
+index_path = "./data/search_index"
+writer_memory_mb = 50
+
+[plugins]
+enabled = true
+directory = "./plugins"
+wasm_fuel_limit = 1_000_000
+
+[rate_limit]
+requests_per_second = 10
+burst_size = 30

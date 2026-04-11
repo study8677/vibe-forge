@@ -1,0 +1,115 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/stevessr-core",
+    "crates/stevessr-db",
+    "crates/stevessr-services",
+    "crates/stevessr-markdown",
+    "crates/stevessr-plugin-api",
+    "crates/stevessr-plugin-host",
+    "crates/stevessr-api",
+    "crates/stevessr-jobs",
+    "crates/stevessr-cache",
+    "crates/stevessr-server",
+    "plugins/example-native-plugin",
+    "plugins/example-wasm-plugin",
+    "tools/plugin-sdk",
+    "tools/cli",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "GPL-2.0-or-later"
+repository = "https://github.com/stevessr/stevessr"
+
+[workspace.dependencies]
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+async-trait = "0.1"
+futures = "0.3"
+
+# Web framework
+axum = { version = "0.8", features = ["ws", "multipart", "macros"] }
+axum-extra = { version = "0.10", features = ["typed-header", "cookie", "form"] }
+tower = { version = "0.5", features = ["full"] }
+tower-http = { version = "0.6", features = ["cors", "trace", "compression-gzip", "limit", "timeout", "request-id"] }
+hyper = { version = "1", features = ["full"] }
+
+# Database
+sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres", "chrono", "uuid", "json", "ipnetwork", "migrate"] }
+
+# Redis
+redis = { version = "0.27", features = ["tokio-comp", "connection-manager"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+
+# Auth
+argon2 = "0.5"
+jsonwebtoken = "9"
+oauth2 = "4"
+rand = "0.8"
+sha2 = "0.10"
+hmac = "0.12"
+hex = "0.4"
+
+# Search
+tantivy = "0.22"
+
+# Email
+lettre = { version = "0.11", default-features = false, features = ["tokio1-rustls-tls", "builder", "hostname", "pool", "smtp-transport"] }
+mail-parser = "0.9"
+
+# Markdown
+pulldown-cmark = "0.12"
+ammonia = "4"
+
+# Plugin system
+libloading = "0.8"
+wasmtime = "27"
+rmp-serde = "1"
+
+# Utilities
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1", features = ["v4", "v7", "serde"] }
+url = "2"
+regex = "1"
+thiserror = "2"
+anyhow = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+config = "0.14"
+ipnetwork = "0.20"
+slug = "0.1"
+base64 = "0.22"
+base32 = "0.5"
+sha1 = "0.10"
+urlencoding = "2"
+md5 = "0.7"
+reqwest = { version = "0.12", features = ["json"] }
+flate2 = "1"
+dashmap = "6"
+parking_lot = "0.12"
+bytes = "1"
+pin-project-lite = "0.2"
+notify = "7"
+
+# Internal crates
+stevessr-core = { path = "crates/stevessr-core" }
+stevessr-db = { path = "crates/stevessr-db" }
+stevessr-services = { path = "crates/stevessr-services" }
+stevessr-markdown = { path = "crates/stevessr-markdown" }
+stevessr-plugin-api = { path = "crates/stevessr-plugin-api" }
+stevessr-plugin-host = { path = "crates/stevessr-plugin-host" }
+stevessr-api = { path = "crates/stevessr-api" }
+stevessr-jobs = { path = "crates/stevessr-jobs" }
+stevessr-cache = { path = "crates/stevessr-cache" }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = "symbols"

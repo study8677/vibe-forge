@@ -1,0 +1,30 @@
+[package]
+name = "stevessr-api"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+stevessr-core = { workspace = true }
+stevessr-db = { workspace = true }
+stevessr-services = { workspace = true }
+stevessr-plugin-api = { workspace = true }
+stevessr-plugin-host = { workspace = true }
+stevessr-cache = { workspace = true }
+axum = { workspace = true }
+axum-extra = { workspace = true }
+tower = { workspace = true }
+tower-http = { workspace = true }
+hyper = { workspace = true }
+sqlx = { workspace = true }
+redis = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+chrono = { workspace = true }
+uuid = { workspace = true }
+thiserror = { workspace = true }
+async-trait = { workspace = true }
+tracing = { workspace = true }
+tokio = { workspace = true }
+bytes = { workspace = true }
+futures = { workspace = true }
+serde_urlencoded = "0.7"

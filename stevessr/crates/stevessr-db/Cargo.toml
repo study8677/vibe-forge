@@ -1,0 +1,16 @@
+[package]
+name = "stevessr-db"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+stevessr-core = { workspace = true }
+sqlx = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+chrono = { workspace = true }
+uuid = { workspace = true }
+thiserror = { workspace = true }
+async-trait = { workspace = true }
+tracing = { workspace = true }
+ipnetwork = { workspace = true }

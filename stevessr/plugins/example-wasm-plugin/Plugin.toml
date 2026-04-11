@@ -1,0 +1,9 @@
+[plugin]
+name = "example-wasm"
+version = "0.1.0"
+api_version = "1"
+description = "Example WASM plugin"
+runtime = "wasm"
+
+[permissions]
+database = true

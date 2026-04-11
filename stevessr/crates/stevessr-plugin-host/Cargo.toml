@@ -1,0 +1,25 @@
+[package]
+name = "stevessr-plugin-host"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+stevessr-core = { workspace = true }
+stevessr-plugin-api = { workspace = true }
+stevessr-db = { workspace = true }
+libloading = { workspace = true }
+wasmtime = { workspace = true }
+sqlx = { workspace = true }
+redis = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+tracing = { workspace = true }
+tokio = { workspace = true }
+dashmap = { workspace = true }
+parking_lot = { workspace = true }
+notify = { workspace = true }
+uuid = { workspace = true }
+rmp-serde = { workspace = true }

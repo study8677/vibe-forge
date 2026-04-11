@@ -1,0 +1,20 @@
+[package]
+name = "stevessr-cli"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "stevessr-cli"
+path = "src/main.rs"
+
+[dependencies]
+stevessr-core = { workspace = true }
+stevessr-db = { workspace = true }
+tokio = { workspace = true }
+sqlx = { workspace = true }
+config = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+clap = { version = "4", features = ["derive"] }
+chrono = { workspace = true }

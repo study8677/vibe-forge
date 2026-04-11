@@ -1,0 +1,15 @@
+[server]
+workers = 0
+
+[database]
+max_connections = 50
+min_connections = 10
+
+[redis]
+pool_size = 20
+
+[email]
+enabled = true
+
+[plugins]
+hot_reload = false

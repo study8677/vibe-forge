@@ -1,0 +1,17 @@
+[package]
+name = "stevessr-cache"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+stevessr-core = { workspace = true }
+redis = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+async-trait = { workspace = true }
+tracing = { workspace = true }
+tokio = { workspace = true }
+dashmap = { workspace = true }
+parking_lot = { workspace = true }
+chrono = { workspace = true }

@@ -1,0 +1,22 @@
+[package]
+name = "stevessr-jobs"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+stevessr-core = { workspace = true }
+stevessr-db = { workspace = true }
+stevessr-services = { workspace = true }
+stevessr-plugin-api = { workspace = true }
+stevessr-cache = { workspace = true }
+redis = { workspace = true }
+sqlx = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+chrono = { workspace = true }
+uuid = { workspace = true }
+thiserror = { workspace = true }
+async-trait = { workspace = true }
+tracing = { workspace = true }
+tokio = { workspace = true }
+anyhow = { workspace = true }

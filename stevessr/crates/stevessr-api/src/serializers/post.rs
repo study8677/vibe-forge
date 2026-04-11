@@ -1,0 +1,77 @@
+use serde_json::{json, Value};
+use stevessr_services::posts::PostRecord;
+
+/// Serialize a post record into the Discourse-compatible JSON format.
+pub fn serialize_post(post: &PostRecord) -> Value {
+    json!({
+        "id": post.id,
+        "name": post.name,
+        "username": post.username,
+        "avatar_template": post.avatar_template,
+        "created_at": post.created_at,
+        "cooked": post.cooked,
+        "post_number": post.post_number,
+        "post_type": post.post_type,
+        "updated_at": post.updated_at,
+        "reply_count": post.reply_count,
+        "reply_to_post_number": post.reply_to_post_number,
+        "quote_count": post.quote_count,
+        "incoming_link_count": post.incoming_link_count,
+        "reads": post.reads,
+        "readers_count": post.readers_count,
+        "score": post.score,
+        "yours": post.yours,
+        "topic_id": post.topic_id,
+        "topic_slug": post.topic_slug,
+        "display_username": post.display_username,
+        "primary_group_name": post.primary_group_name,
+        "flair_name": post.flair_name,
+        "flair_url": post.flair_url,
+        "flair_bg_color": post.flair_bg_color,
+        "flair_color": post.flair_color,
+        "version": post.version,
+        "can_edit": post.can_edit,
+        "can_delete": post.can_delete,
+        "can_recover": post.can_recover,
+        "can_wiki": post.can_wiki,
+        "user_title": post.user_title,
+        "bookmarked": post.bookmarked,
+        "raw": post.raw,
+        "actions_summary": post.actions_summary,
+        "moderator": post.moderator,
+        "admin": post.admin,
+        "staff": post.staff,
+        "user_id": post.user_id,
+        "hidden": post.hidden,
+        "trust_level": post.trust_level,
+        "deleted_at": post.deleted_at,
+        "user_deleted": post.user_deleted,
+        "edit_reason": post.edit_reason,
+        "can_view_edit_history": post.can_view_edit_history,
+        "wiki": post.wiki,
+        "reviewable_id": post.reviewable_id,
+        "reviewable_score_count": post.reviewable_score_count,
+        "reviewable_score_pending_count": post.reviewable_score_pending_count,
+        "user_cakeday": post.user_cakeday,
+        "can_accept_answer": post.can_accept_answer,
+        "can_unaccept_answer": post.can_unaccept_answer,
+        "accepted_answer": post.accepted_answer,
+        "topic_accepted_answer": post.topic_accepted_answer,
+        "link_counts": post.link_counts,
+        "polls": post.polls,
+    })
+}
+
+/// Serialize a compact post representation for search results.
+pub fn serialize_post_compact(post: &PostRecord) -> Value {
+    json!({
+        "id": post.id,
+        "username": post.username,
+        "avatar_template": post.avatar_template,
+        "created_at": post.created_at,
+        "cooked": post.cooked,
+        "post_number": post.post_number,
+        "topic_id": post.topic_id,
+        "topic_slug": post.topic_slug,
+    })
+}

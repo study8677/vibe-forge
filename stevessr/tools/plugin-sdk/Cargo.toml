@@ -1,0 +1,12 @@
+[package]
+name = "stevessr-plugin-sdk"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+stevessr-plugin-api = { workspace = true }
+async-trait = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+thiserror = { workspace = true }

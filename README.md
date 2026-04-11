@@ -34,6 +34,7 @@ Vibe Coding 项目合集 — 每个目录均由 **50 字以内的提示词** 一
 | `墨` | 墨 · 工具集 | 开发一个工具网站，包含常见的加解密操作、图片压缩裁剪等操作、页面风格为黑白科技风，总工具不低于20个。 | Claude Opus 4.6 | HTML / CSS / Vanilla JS / CryptoJS |
 | `stevessr` | Stevessr — 纯 Rust 重写的 Discourse 论坛后端 | 将 Discourse 完全转换为纯 Rust 后端项目，要求功能 1:1 还原，同时为插件提供工业级完备接口 | Claude Opus 4.6 | Rust / Axum / SQLx / PostgreSQL / Redis / Tantivy / wasmtime |
 | `我信你是秦始皇` | 航班价格监控工具 | 输入出发/到达机场和日期时段，自动检测机票价格变动，降价超阈值时邮件推送 | Claude Opus 4.6 | Python / Amadeus API / SMTP |
+| `AZu` | 赛博朋克梦境生成器 | 极致霓虹赛博朋克Gradio HF Space：AI梦境艺术音乐代码智能生成器，视觉核爆沉浸式交互体验，一键部署震撼HF空间 | Claude Opus 4.6 | Gradio + PIL + NumPy |
 
 ### TechnologyStar 提示词
 

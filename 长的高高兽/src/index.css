@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'PingFang SC',
+    'Hiragino Sans GB',
+    'Microsoft YaHei',
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 高风险行高亮 */
+.row-high-risk td {
+  background: #fff2f0 !important;
+}
+.row-high-risk:hover td {
+  background: #ffebe8 !important;
+}
+
+/* 已通过行 */
+.row-approved td {
+  background: #f6ffed !important;
+}
+.row-approved:hover td {
+  background: #eeffde !important;
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #bfbfbf;
+}
+
+/* Ant Design 细调 */
+.ant-layout-sider-trigger {
+  background: rgba(0, 0, 0, 0.25) !important;
+}
+.ant-upload-drag {
+  border-radius: 12px !important;
+}
+.ant-table-wrapper .ant-table-thead > tr > th {
+  font-weight: 600 !important;
+}

@@ -37,6 +37,7 @@ Vibe Coding 项目合集 — 每个目录均由 **50 字以内的提示词** 一
 | `AZu` | 赛博朋克梦境生成器 | 极致霓虹赛博朋克Gradio HF Space：AI梦境艺术音乐代码智能生成器，视觉核爆沉浸式交互体验，一键部署震撼HF空间 | Claude Opus 4.6 | Gradio + PIL + NumPy |
 | `长的高高兽` | 亚马逊上架审查工作台 | 面向亚马逊跨境电商运营审查场景的桌面工作台，集中处理批量上架风险筛查与单图快速核查。 | Claude Opus 4.6 | React + TypeScript + Ant Design + Vite |
 | `ZenverTao` | 愤怒的小鸟3D | 用Three.js做一个3D版愤怒的小鸟网页游戏 | Claude Opus | Three.js + Cannon-es + HTML5 |
+| `lwh` | LWH 日志监控中心 | 做一个日志查看工具。左侧管理服务器连接（单机/集群切换），右侧实时推送日志流（点击服务名快速切日志）。选中日志一键调用 Gemini、Claude 等 AI 接口解析报错（内嵌对话窗）。 | Claude Opus 4.6 | React + Vite + Tailwind + Express + Socket.IO + SSH2 |
 
 ### TechnologyStar 提示词
 
